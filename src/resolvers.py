@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from aiogram.types import FSInputFile
+
 if TYPE_CHECKING:
     from models import FileType
     import storage.abstract
@@ -26,10 +28,12 @@ from configs.config import ADMIN_ID
 from models import AIModels, AISetup, User, Work
 from utils import utils
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 class Resolver:
 
-    BASE_PATH = Path("../downloads")
+    BASE_PATH = BASE_DIR / "downloads"
 
     START_TEXT = (
         "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
@@ -112,7 +116,12 @@ class Resolver:
         await state.set_state(None)
         await state.update_data(model=AIModels.NONE)
 
-        await message.answer(self.START_TEXT)
+        logo_path = BASE_DIR / "src" / "assets" / "images" / "logo.jpg"
+        await message.answer_photo(
+            photo=FSInputFile(logo_path), caption=self.START_TEXT
+        )
+
+        # await message.answer(self.START_TEXT)
 
     async def menu(self, message: Message):
         await message.answer(self.MENU_TEXT)
