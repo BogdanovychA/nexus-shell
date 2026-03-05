@@ -7,6 +7,10 @@ import openai
 from google import genai
 from google.genai import errors, types
 
+CLAUDE_URL = "https://platform.claude.com/settings/keys"
+CHATGPT_URL = "https://platform.openai.com/account/api-keys"
+GEMINI_URL = "https://aistudio.google.com/app/api-keys"
+
 
 class AIModel(ABC):
 
@@ -21,7 +25,7 @@ class AIModel(ABC):
 class Claude(AIModel):
 
     NAME = "Claude"
-    TOKEN_URL = "https://platform.claude.com/settings/keys"
+    TOKEN_URL = CLAUDE_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
@@ -67,7 +71,7 @@ class Claude(AIModel):
 class ChatGPT:
 
     NAME = "ChatGPT"
-    TOKEN_URL = "https://platform.openai.com/account/api-keys"
+    TOKEN_URL = CHATGPT_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
@@ -112,7 +116,7 @@ class ChatGPT:
 class Gemini(AIModel):
 
     NAME = "Gemini"
-    TOKEN_URL = "https://aistudio.google.com/app/api-keys"
+    TOKEN_URL = GEMINI_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 

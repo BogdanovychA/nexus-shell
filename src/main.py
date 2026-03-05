@@ -40,6 +40,7 @@ if __name__ == "__main__":
     dp.message.register(resolvers.setup_ai_set_model, Command("model"))
     dp.message.register(resolvers.check_status, Command("status"))
     dp.message.register(resolvers.menu, Command("menu"))
+    dp.message.register(resolvers.help, Command("help"))
 
     # ** Обробники інлайн-кнопок **
     dp.callback_query.register(resolvers.set_model, F.data.startswith("set_model:"))

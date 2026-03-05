@@ -30,12 +30,46 @@ from utils import utils
 class Resolver:
 
     BASE_PATH = Path("../downloads")
+
+    START_TEXT = (
+        "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
+        "Ти підключився до універсальної оболонки для роботи з провідними мовними моделями. "
+        "Тепер Gemini, GPT та Claude доступні в одному інтерфейсі твого Telegram.\n\n"
+        "Щоб розпочати роботу, виконай три прості кроки:\n\n"
+        "1️⃣ 🔑 Підключи API-ключ\n"
+        "Скористайся командою `/setup`, щоб додати свій ключ від потрібної моделі. "
+        "Я підтримую пряму інтеграцію, що забезпечує швидкість та конфіденційність.\n\n"
+        "2️⃣ 🧠 Встанови Генеральний промпт\n"
+        "Задай контекст, роль або правила поведінки свого агента. Це дозволить боту "
+        "стати асистентом, аналітиком або розробником.\n\n"
+        "3️⃣ 🚀 Починай роботу\n"
+        "Надсилай звичайні промпти, і твій кастомний агент миттєво візьметься до виконання завдань.\n\n"
+        "--- \n"
+        "Використовуй /menu або /help, щоб дізнатися про всі можливості."
+    )
+
     MENU_TEXT = (
         "Натисни:\n\n"
-        + "/setup для швидкого старту\n\n"
-        + "/model щоб обрати мовну модель\n\n"
-        + "/status щоб перевірити налаштування\n\n"
-        + "/menu щоб переглянути це меню ще раз\n\n"
+        + "🔹 /setup для швидкого старту\n\n"
+        + "🔹 /model щоб обрати мовну модель\n\n"
+        + "🔹 /status щоб перевірити налаштування\n\n"
+        + "🔹 /help щоб дізнатися, де взяти API-ключ (токен) від мовної моделі\n\n"
+        + "🔹 /menu щоб переглянути це меню ще раз\n\n"
+    )
+
+    HELP_TEXT = (
+        "🔑 Де отримати API-ключі для Nexus Shell?\n\n"
+        "Для роботи бота тобі необхідно згенерувати ключі на офіційних платформах розробників:\n\n"
+        "🔹 Gemini (Google):\n"
+        f"{ai.abstract.GEMINI_URL}\n\n"
+        "🔹 Claude (Anthropic):\n"
+        f"{ai.abstract.CLAUDE_URL}\n\n"
+        "🔹 ChatGPT (OpenAI):\n"
+        f"{ai.abstract.CHATGPT_URL}\n\n"
+        "--- \n"
+        "⚠️ Важливо:\n"
+        "• Ключі використовуються виключно для запитів до моделей.\n"
+        "• Переконайся, що на балансі (Google/Anthropic/OpenAI) є кошти для оплати запитів через API.\n\n"
     )
 
     def __init__(self, storage_manager: storage.abstract.StorageManager):
@@ -78,10 +112,13 @@ class Resolver:
         await state.set_state(None)
         await state.update_data(model=AIModels.NONE)
 
-        await message.answer("Привіт!\n" + "Я дуже розумний бот!\n\n" + self.MENU_TEXT)
+        await message.answer(self.START_TEXT)
 
     async def menu(self, message: Message):
         await message.answer(self.MENU_TEXT)
+
+    async def help(self, message: Message):
+        await message.answer(self.HELP_TEXT)
 
     @staticmethod
     def _create_model_buttons():
