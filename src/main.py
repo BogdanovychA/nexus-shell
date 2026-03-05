@@ -1,0 +1,87 @@
+# -*- coding: utf-8 -*-
+
+import asyncio
+from functools import partial
+
+from aiogram import Bot, Dispatcher, F
+from aiogram.filters import Command
+from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
+from redis.asyncio import Redis
+
+import storage.abstract
+from models import AISetup, FileType, Work
+from resolvers import Resolver
+from secret import secret
+
+if __name__ == "__main__":
+
+    bot = Bot(token=secret.TOKEN)
+
+    global_storage = storage.abstract.FirebaseStorage()
+    resolvers = Resolver(storage_manager=global_storage)
+
+    local_storage = RedisStorage(
+        redis=Redis(
+            host='master',
+            port=6379,
+            username='bogdanovych-smart-bot',
+            password=secret.REDIS_PASSWORD,
+            db=0,
+            decode_responses=True,
+        ),
+        key_builder=DefaultKeyBuilder(with_bot_id=True, prefix="bogdanovych-smart-bot"),
+    )
+
+    dp = Dispatcher(storage=local_storage)
+
+    # ** Обробники команд **
+    dp.message.register(resolvers.start, Command("start"))
+    dp.message.register(resolvers.setup_ai_start, Command("setup"))
+    dp.message.register(resolvers.setup_ai_set_model, Command("model"))
+    dp.message.register(resolvers.check_status, Command("status"))
+    dp.message.register(resolvers.menu, Command("menu"))
+
+    # ** Обробники інлайн-кнопок **
+    dp.callback_query.register(resolvers.set_model, F.data.startswith("set_model:"))
+
+    # ** Обробники статусів **
+    dp.message.register(resolvers.setup_ai_set_token, AISetup.waiting_for_token, F.text)
+    dp.message.register(
+        resolvers.setup_ai_set_prompt, AISetup.waiting_for_prompt, F.text
+    )
+    #
+    dp.message.register(resolvers.query, Work.ready, F.text)
+
+    # ** Обробник за замовчуванням **
+    dp.message.register(resolvers.default_text, F.text)
+
+    #
+    #
+    # ** Інші обробники **
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.PHOTO), F.photo
+    )
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.VIDEO), F.video
+    )
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.VIDEO_NOTE), F.video_note
+    )
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.AUDIO), F.audio
+    )
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.VOICE), F.voice
+    )
+    dp.message.register(
+        partial(resolvers.media_sever, filetype=FileType.DOCUMENT), F.document
+    )
+
+    dp.message.register(resolvers.sticker, F.sticker)
+    dp.message.register(resolvers.contact, F.contact)
+    dp.message.register(resolvers.location, F.location)
+    dp.message.register(resolvers.animation, F.animation)
+    dp.message.register(resolvers.other)
+
+    # запускаємо обробку вхідних повідомлень
+    asyncio.run(dp.start_polling(bot))

@@ -1,0 +1,28 @@
+# IDEs
+.idea/
+.vscode/
+
+# Virtual environments
+.venv*/
+
+# Python-generated files
+**/__pycache__/
+**/*.pyc
+*.py[oc]
+dist/
+wheels/
+*.egg-info
+
+# Tests
+htmlcov/
+.pytest_cache/
+.coverage
+
+# Project
+src/secret/*
+!src/secret/.gitkeep
+downloads/*
+!downloads/.gitkeep
+bin/
+src/temp/
+build*/
