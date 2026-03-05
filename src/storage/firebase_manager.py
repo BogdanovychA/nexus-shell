@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
+
 import firebase_admin
 from firebase_admin import credentials, firestore
 
 from configs.firebase_config import (
-    FIREBASE_CERTIFICATE_PATH,
+    FIREBASE_CERTIFICATE_DIRECTORY,
+    FIREBASE_CERTIFICATE_FILENAME,
     FIREBASE_LIMIT,
     FIREBASE_MAIN_COLLECTION,
 )
 from models import User
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FIREBASE_CERTIFICATE_PATH = (
+    BASE_DIR / FIREBASE_CERTIFICATE_DIRECTORY / FIREBASE_CERTIFICATE_FILENAME
+)
 
 try:
     app = firebase_admin.get_app()  # якщо вже ініціалізовано — отримуємо
