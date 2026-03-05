@@ -21,7 +21,6 @@ dev = [
     "isort>=8.0.1",
 ]
 
-
 [tool.black]
 line-length = 88
 target-version = ['py310']
