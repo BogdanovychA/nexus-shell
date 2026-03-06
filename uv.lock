@@ -855,11 +855,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiogram", specifier = "==3.26.0" },
-    { name = "anthropic", specifier = ">=0.84.0" },
+    { name = "anthropic", specifier = "==0.84.0" },
     { name = "firebase-admin", specifier = "==7.2.0" },
     { name = "google-genai", specifier = "==1.66.0" },
     { name = "openai", specifier = "==2.26.0" },
-    { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "pydantic-settings", specifier = "==2.13.1" },
     { name = "pydentic", specifier = "==0.0.1.dev3" },
     { name = "redis", specifier = "==7.2.1" },
 ]
