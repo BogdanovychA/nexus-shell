@@ -28,6 +28,7 @@ from models import AIModels, AISetup, User, Work
 class Resolver:
 
     BASE_PATH = bot.settings.base_dir / "downloads"
+    LOGO_PATH = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
 
     START_TEXT = (
         "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
@@ -110,12 +111,9 @@ class Resolver:
         await state.set_state(None)
         await state.update_data(model=AIModels.NONE)
 
-        logo_path = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
         await message.answer_photo(
-            photo=FSInputFile(logo_path), caption=self.START_TEXT
+            photo=FSInputFile(self.LOGO_PATH), caption=self.START_TEXT
         )
-
-        # await message.answer(self.START_TEXT)
 
     async def menu(self, message: Message):
         await message.answer(self.MENU_TEXT)
@@ -220,7 +218,6 @@ class Resolver:
         await self.save_ai_settings(message, model, "token")
 
         await message.answer("Введи генеральний промпт")
-
         await state.set_state(AISetup.waiting_for_prompt)
 
     async def setup_ai_set_prompt(self, message: Message, state: FSMContext):
