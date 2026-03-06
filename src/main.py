@@ -8,6 +8,7 @@ from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from redis.asyncio import Redis
 
 import storage.abstract
+from configs import redis
 from models import AISetup, Work  # , FileType
 from resolvers import Resolver
 from secret import secret
@@ -23,15 +24,8 @@ if __name__ == "__main__":
     resolvers = Resolver(storage_manager=global_storage)
 
     local_storage = RedisStorage(
-        redis=Redis(
-            host='master',
-            port=6379,
-            username='nexus-shell',
-            password=secret.REDIS_PASSWORD,
-            db=0,
-            decode_responses=True,
-        ),
-        key_builder=DefaultKeyBuilder(with_bot_id=True, prefix="nexus-shell"),
+        redis=Redis(**redis.settings.redis.model_dump()),
+        key_builder=DefaultKeyBuilder(**redis.settings.key_builder.model_dump()),
     )
 
     dp = Dispatcher(storage=local_storage)

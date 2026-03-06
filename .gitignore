@@ -5,6 +5,9 @@
 # Virtual environments
 .venv*/
 
+# Environmental variables
+.env
+
 # Python-generated files
 **/__pycache__/
 **/*.pyc

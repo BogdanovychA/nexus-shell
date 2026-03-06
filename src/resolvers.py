@@ -7,12 +7,10 @@ from typing import TYPE_CHECKING
 from aiogram.types import FSInputFile
 
 if TYPE_CHECKING:
-    from models import FileType
     import storage.abstract
 
 from pathlib import Path
 
-from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (
@@ -24,9 +22,7 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 import ai.abstract
-from configs.config import ADMIN_ID
 from models import AIModels, AISetup, User, Work
-from utils import utils
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
