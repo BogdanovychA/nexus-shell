@@ -19,8 +19,8 @@ class RedisSettings(BaseSettings):
 class KeyBuilderSettings(BaseSettings):
     """Налаштування для DefaultKeyBuilder"""
 
-    with_bot_id: bool = True
     prefix: str
+    with_bot_id: bool = True
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent

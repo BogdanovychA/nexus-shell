@@ -8,7 +8,7 @@ from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from redis.asyncio import Redis
 
 import storage.abstract
-from configs import redis
+from config import redis
 from models import AISetup, Work  # , FileType
 from resolvers import Resolver
 from secret import secret

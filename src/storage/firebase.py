@@ -1,32 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-from configs.firebase_config import (
-    FIREBASE_CERTIFICATE_DIRECTORY,
-    FIREBASE_CERTIFICATE_FILENAME,
-    FIREBASE_LIMIT,
-    FIREBASE_MAIN_COLLECTION,
-)
+from config import firebase
 from models import User
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-FIREBASE_CERTIFICATE_PATH = (
-    BASE_DIR / FIREBASE_CERTIFICATE_DIRECTORY / FIREBASE_CERTIFICATE_FILENAME
-)
 
 try:
     app = firebase_admin.get_app()  # якщо вже ініціалізовано — отримуємо
 except ValueError:
-    cred = credentials.Certificate(FIREBASE_CERTIFICATE_PATH)
+    cred = credentials.Certificate(firebase.settings.path)
     app = firebase_admin.initialize_app(cred)  # ініціалізуємо лише один раз
 
 db = firestore.client(app)  # після цього можна створювати клієнти сервісів
 
-DB = db.collection(FIREBASE_MAIN_COLLECTION)
+DB = db.collection(firebase.settings.main_collection)
 
 
 def save_user(user: User) -> None:
@@ -64,7 +53,7 @@ def load_user(user_id: int) -> User | None:
     return User(**data)
 
 
-def get_users(limit: int = FIREBASE_LIMIT, last_doc=None) -> list[User]:
+def get_users(limit: int = firebase.settings.limit, last_doc=None) -> list[User]:
     """Отримуємо всіх користувачів з Firebase Firestore"""
 
     users_list = []
@@ -87,9 +76,3 @@ def get_users(limit: int = FIREBASE_LIMIT, last_doc=None) -> list[User]:
         users_list += get_users(limit, docs[-1])
 
     return users_list
-
-
-if __name__ == "__main__":
-    update_user_fields(125171, {"gemini": {"token1": None, "token2": "2223"}})
-    print(load_user_fields(125171, fields={"token", "gemini"}))
-    print(load_user(125171))
