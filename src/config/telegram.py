@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from config import bot
 
 
 class TelegramSettings(BaseSettings):
@@ -12,7 +10,7 @@ class TelegramSettings(BaseSettings):
     admin_id: int | None = None
 
     model_config = SettingsConfigDict(
-        env_file=BASE_DIR / ".env", env_prefix="TELEGRAM__", extra="ignore"
+        env_file=bot.settings.base_dir / ".env", env_prefix="TELEGRAM__", extra="ignore"
     )
 
 

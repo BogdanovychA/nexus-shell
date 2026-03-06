@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from config import bot
 
 
 class RedisSettings(BaseSettings):
@@ -23,16 +23,15 @@ class KeyBuilderSettings(BaseSettings):
     with_bot_id: bool = True
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-
 class Settings(BaseSettings):
 
     redis: RedisSettings | None = None
     key_builder: KeyBuilderSettings | None = None
 
     model_config = SettingsConfigDict(
-        env_file=BASE_DIR / ".env", env_nested_delimiter="__", extra="ignore"
+        env_file=bot.settings.base_dir / ".env",
+        env_nested_delimiter="__",
+        extra="ignore",
     )
 
 

@@ -14,7 +14,6 @@ from resolvers import Resolver
 
 # from functools import partial
 
-
 if __name__ == "__main__":
 
     telegram_bot = Bot(token=telegram.settings.token)

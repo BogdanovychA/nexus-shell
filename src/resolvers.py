@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING
 
 from aiogram.types import FSInputFile
 
+from config import bot
+
 if TYPE_CHECKING:
     import storage.abstract
-
-from pathlib import Path
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
@@ -24,12 +24,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 import ai.abstract
 from models import AIModels, AISetup, User, Work
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 class Resolver:
 
-    BASE_PATH = BASE_DIR / "downloads"
+    BASE_PATH = bot.settings.base_dir / "downloads"
 
     START_TEXT = (
         "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
@@ -112,7 +110,7 @@ class Resolver:
         await state.set_state(None)
         await state.update_data(model=AIModels.NONE)
 
-        logo_path = BASE_DIR / "src" / "assets" / "images" / "logo.jpg"
+        logo_path = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
         await message.answer_photo(
             photo=FSInputFile(logo_path), caption=self.START_TEXT
         )
@@ -299,7 +297,7 @@ class Resolver:
 
     # async def media_sever(self, message: Message, bot: Bot, filetype: FileType):
     #
-    #     if message.from_user.id == ADMIN_ID:
+    #     if message.from_user.id == telegram.settings.admin_id:
     #         await utils.save_file(message, bot, filetype, base_path=self.BASE_PATH)
     #     else:
     #         await message.answer("Ви не адмін :(")
@@ -315,6 +313,6 @@ class Resolver:
     #
     # async def animation(self, message: Message):
     #     await message.answer("animation")
-
+    #
     async def other(self, message: Message):
         await message.answer("Я працюю лише з текстовими повідомленнями")
