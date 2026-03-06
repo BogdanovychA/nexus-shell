@@ -301,24 +301,24 @@ class Resolver:
             "Перед тим, як звертатися до мовної моделі, перевір свої налаштування: /status"
         )
 
-    async def media_sever(self, message: Message, bot: Bot, filetype: FileType):
-
-        if message.from_user.id == ADMIN_ID:
-            await utils.save_file(message, bot, filetype, base_path=self.BASE_PATH)
-        else:
-            await message.answer("Ви не адмін :(")
-
-    async def sticker(self, message: Message):
-        await message.answer("sticker")
-
-    async def contact(self, message: Message):
-        await message.answer("contact")
-
-    async def location(self, message: Message):
-        await message.answer("location")
-
-    async def animation(self, message: Message):
-        await message.answer("animation")
+    # async def media_sever(self, message: Message, bot: Bot, filetype: FileType):
+    #
+    #     if message.from_user.id == ADMIN_ID:
+    #         await utils.save_file(message, bot, filetype, base_path=self.BASE_PATH)
+    #     else:
+    #         await message.answer("Ви не адмін :(")
+    #
+    # async def sticker(self, message: Message):
+    #     await message.answer("sticker")
+    #
+    # async def contact(self, message: Message):
+    #     await message.answer("contact")
+    #
+    # async def location(self, message: Message):
+    #     await message.answer("location")
+    #
+    # async def animation(self, message: Message):
+    #     await message.answer("animation")
 
     async def other(self, message: Message):
-        await message.answer("other")
+        await message.answer("Я працюю лише з текстовими повідомленнями")

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-from functools import partial
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
@@ -9,9 +8,12 @@ from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from redis.asyncio import Redis
 
 import storage.abstract
-from models import AISetup, FileType, Work
+from models import AISetup, Work  # , FileType
 from resolvers import Resolver
 from secret import secret
+
+# from functools import partial
+
 
 if __name__ == "__main__":
 
@@ -24,12 +26,12 @@ if __name__ == "__main__":
         redis=Redis(
             host='master',
             port=6379,
-            username='bogdanovych-smart-bot',
+            username='nexus-shell',
             password=secret.REDIS_PASSWORD,
             db=0,
             decode_responses=True,
         ),
-        key_builder=DefaultKeyBuilder(with_bot_id=True, prefix="bogdanovych-smart-bot"),
+        key_builder=DefaultKeyBuilder(with_bot_id=True, prefix="nexus-shell"),
     )
 
     dp = Dispatcher(storage=local_storage)
@@ -59,29 +61,30 @@ if __name__ == "__main__":
     #
     #
     # ** Інші обробники **
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.PHOTO), F.photo
-    )
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.VIDEO), F.video
-    )
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.VIDEO_NOTE), F.video_note
-    )
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.AUDIO), F.audio
-    )
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.VOICE), F.voice
-    )
-    dp.message.register(
-        partial(resolvers.media_sever, filetype=FileType.DOCUMENT), F.document
-    )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.PHOTO), F.photo
+    # )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.VIDEO), F.video
+    # )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.VIDEO_NOTE), F.video_note
+    # )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.AUDIO), F.audio
+    # )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.VOICE), F.voice
+    # )
+    # dp.message.register(
+    #     partial(resolvers.media_sever, filetype=FileType.DOCUMENT), F.document
+    # )
+    #
+    # dp.message.register(resolvers.sticker, F.sticker)
+    # dp.message.register(resolvers.contact, F.contact)
+    # dp.message.register(resolvers.location, F.location)
+    # dp.message.register(resolvers.animation, F.animation)
 
-    dp.message.register(resolvers.sticker, F.sticker)
-    dp.message.register(resolvers.contact, F.contact)
-    dp.message.register(resolvers.location, F.location)
-    dp.message.register(resolvers.animation, F.animation)
     dp.message.register(resolvers.other)
 
     # запускаємо обробку вхідних повідомлень
