@@ -8,17 +8,16 @@ from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from redis.asyncio import Redis
 
 import storage.abstract
-from config import redis
+from config import redis, telegram
 from models import AISetup, Work  # , FileType
 from resolvers import Resolver
-from secret import secret
 
 # from functools import partial
 
 
 if __name__ == "__main__":
 
-    bot = Bot(token=secret.TOKEN)
+    telegram_bot = Bot(token=telegram.settings.token)
 
     global_storage = storage.abstract.FirebaseStorage()
     resolvers = Resolver(storage_manager=global_storage)
@@ -82,4 +81,4 @@ if __name__ == "__main__":
     dp.message.register(resolvers.other)
 
     # запускаємо обробку вхідних повідомлень
-    asyncio.run(dp.start_polling(bot))
+    asyncio.run(dp.start_polling(telegram_bot))
