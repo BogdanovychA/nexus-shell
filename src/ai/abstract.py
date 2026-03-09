@@ -7,9 +7,7 @@ import openai
 from google import genai
 from google.genai import errors, types
 
-CLAUDE_URL = "https://platform.claude.com/settings/keys"
-CHATGPT_URL = "https://platform.openai.com/account/api-keys"
-GEMINI_URL = "https://aistudio.google.com/app/api-keys"
+from utils import constants
 
 
 class AIModel(ABC):
@@ -25,13 +23,13 @@ class AIModel(ABC):
 class Claude(AIModel):
 
     NAME = "Claude"
-    TOKEN_URL = CLAUDE_URL
+    TOKEN_URL = constants.CLAUDE_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
-        # token = token.strip()
-        # if not token:
-        #     return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+        token = token.strip()
+        if not token:
+            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
 
         try:
             client = anthropic.AsyncAnthropic(api_key=token)
@@ -62,7 +60,7 @@ class Claude(AIModel):
             print(e)
 
         except Exception as e:
-            text = f"Неочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
             print(e)
 
         return text
@@ -71,7 +69,7 @@ class Claude(AIModel):
 class ChatGPT:
 
     NAME = "ChatGPT"
-    TOKEN_URL = CHATGPT_URL
+    TOKEN_URL = constants.CHATGPT_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
@@ -107,7 +105,7 @@ class ChatGPT:
             )
             print(e)
         except Exception as e:
-            text = f"Неочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
             print(e)
 
         return text
@@ -116,7 +114,7 @@ class ChatGPT:
 class Gemini(AIModel):
 
     NAME = "Gemini"
-    TOKEN_URL = GEMINI_URL
+    TOKEN_URL = constants.GEMINI_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
@@ -159,7 +157,7 @@ class Gemini(AIModel):
                     + f"Отримати можна тут: {self.TOKEN_URL}"
                 )
             else:
-                text = f"Помилка клієнта {self.NAME} (API)"
+                text = f"{constants.FORWARD_TEXT}\nПомилка клієнта {self.NAME} (API)"
 
             print(error_msg)
 
@@ -168,7 +166,7 @@ class Gemini(AIModel):
             print(e)
 
         except Exception as e:
-            text = f"Неочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
             print(e)
 
         return text

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from aiogram.types import FSInputFile
 
 from config import bot
+from utils import constants
 
 if TYPE_CHECKING:
     import storage.abstract
@@ -29,47 +30,6 @@ class Resolver:
 
     BASE_PATH = bot.settings.base_dir / "downloads"
     LOGO_PATH = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
-
-    START_TEXT = (
-        "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
-        "Ти підключився до універсальної оболонки для роботи з провідними мовними моделями. "
-        "Тепер Gemini, GPT та Claude доступні в одному інтерфейсі твого Telegram.\n\n"
-        "Щоб розпочати роботу, виконай три прості кроки:\n\n"
-        "1️⃣ 🔑 Підключи API-ключ\n"
-        "Скористайся командою `/setup`, щоб додати свій ключ від потрібної моделі. "
-        "Я підтримую пряму інтеграцію, що забезпечує швидкість та конфіденційність.\n\n"
-        "2️⃣ 🧠 Встанови Генеральний промпт\n"
-        "Задай контекст, роль або правила поведінки свого агента. Це дозволить боту "
-        "стати асистентом, аналітиком або розробником.\n\n"
-        "3️⃣ 🚀 Починай роботу\n"
-        "Надсилай звичайні промпти, і твій кастомний агент миттєво візьметься до виконання завдань.\n\n"
-        "--- \n"
-        "Використовуй /menu або /help, щоб дізнатися про всі можливості."
-    )
-
-    MENU_TEXT = (
-        "Натисни:\n\n"
-        + "🔹 /setup для швидкого старту\n\n"
-        + "🔹 /model щоб обрати мовну модель\n\n"
-        + "🔹 /status щоб перевірити налаштування\n\n"
-        + "🔹 /help щоб дізнатися, де взяти API-ключ (токен) від мовної моделі\n\n"
-        + "🔹 /menu щоб переглянути це меню ще раз\n\n"
-    )
-
-    HELP_TEXT = (
-        "🔑 Де отримати API-ключі для Nexus Shell?\n\n"
-        "Для роботи бота тобі необхідно згенерувати ключі на офіційних платформах розробників:\n\n"
-        "🔹 Gemini (Google):\n"
-        f"{ai.abstract.GEMINI_URL}\n\n"
-        "🔹 Claude (Anthropic):\n"
-        f"{ai.abstract.CLAUDE_URL}\n\n"
-        "🔹 ChatGPT (OpenAI):\n"
-        f"{ai.abstract.CHATGPT_URL}\n\n"
-        "--- \n"
-        "⚠️ Важливо:\n"
-        "• Ключі використовуються виключно для запитів до моделей.\n"
-        "• Переконайся, що на балансі (Google/Anthropic/OpenAI) є кошти для оплати запитів через API.\n\n"
-    )
 
     def __init__(self, storage_manager: storage.abstract.StorageManager):
         self.storage_manager = storage_manager
@@ -115,16 +75,18 @@ class Resolver:
 
         if self.LOGO_PATH.exists():
             await message.answer_photo(
-                photo=FSInputFile(self.LOGO_PATH), caption=self.START_TEXT
+                photo=FSInputFile(self.LOGO_PATH), caption=constants.START_TEXT
             )
         else:
-            await message.answer(self.START_TEXT)
+            await message.answer(constants.START_TEXT)
 
-    async def menu(self, message: Message):
-        await message.answer(self.MENU_TEXT)
+    @staticmethod
+    async def menu(message: Message):
+        await message.answer(constants.MENU_TEXT)
 
-    async def help(self, message: Message):
-        await message.answer(self.HELP_TEXT)
+    @staticmethod
+    async def help(message: Message):
+        await message.answer(constants.HELP_TEXT)
 
     @staticmethod
     def _create_model_buttons():
@@ -254,23 +216,26 @@ class Resolver:
             await message.answer(f"Щось пішло не так. Налаштуй бота: /setup")
             return
 
-        match model:
-            case AIModels.GEMINI:
-                client = ai.abstract.Gemini()
-            case AIModels.GPT:
-                client = ai.abstract.ChatGPT()
-            case AIModels.CLAUDE:
-                client = ai.abstract.Claude()
-            case _:
-                await message.answer(
-                    f"Я поки не вмію працювати з {model}.\nОбери іншу: /model"
-                )
-                return
+        clients = {
+            AIModels.GEMINI: ai.abstract.Gemini,
+            AIModels.GPT: ai.abstract.ChatGPT,
+            AIModels.CLAUDE: ai.abstract.Claude,
+        }
+
+        client_class = clients.get(model)
+        if not client_class:
+            await message.answer(
+                f"Я поки не вмію працювати з {model}.\nОбери іншу: /model"
+            )
+            return
+
+        client = client_class()
 
         await message.answer(f"Зчитую API-ключ та генеральний промпт...")
 
-        token = await state.get_value("token", default=None)
-        prompt = await state.get_value("prompt", default=None)
+        data = await state.get_data()
+        token = data.get("token")
+        prompt = data.get("prompt")
 
         if token is None or prompt is None:  # Перестраховка :)
             await message.answer(
@@ -294,7 +259,7 @@ class Resolver:
 
             await state.update_data(token=token, prompt=prompt)
 
-        await message.answer(
+        answer_message = await message.answer(
             f"⏳ Звертаюся до {model}... Запит може тривати до 2-3 хвилин..."
         )
 
@@ -304,20 +269,27 @@ class Resolver:
 
         # Обмеження Телеграму щодо довжини
         try:
-            await message.answer(text)
+            await answer_message.edit_text(text)
 
         except TelegramBadRequest as e:
-            if "message is too long" in str(e):
+            error_message = str(e)
+            if (
+                "too long" in error_message.lower()
+                or "too_long" in error_message.lower()
+            ):
                 file = BufferedInputFile(text.encode("utf-8"), filename="result.txt")
                 await message.answer_document(
                     file, caption="Відповідь занадто довга. Надсилаю файлом."
                 )
-
             else:
-                file = BufferedInputFile(str(e).encode("utf-8"), filename="error.txt")
-                await message.answer_document(
-                    file, caption=f"Непередбачувана помилка при зверненні до {model}."
+                file = BufferedInputFile(
+                    error_message.encode("utf-8"), filename="error.txt"
                 )
+                await message.answer_document(
+                    file,
+                    caption=f"Непередбачувана помилка при зверненні до {model}. {constants.FORWARD_TEXT}",
+                )
+                print(error_message)
 
     @staticmethod
     async def default_text(message: Message):
