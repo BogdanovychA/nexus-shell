@@ -5,6 +5,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
+from aiogram.types import BotCommand, BotCommandScopeDefault
 from redis.asyncio import Redis
 
 import storage.abstract
@@ -14,9 +15,21 @@ from resolvers import Resolver
 
 # from functools import partial
 
-if __name__ == "__main__":
 
+async def set_main_menu(bot: Bot):
+    main_menu_commands = [
+        BotCommand(command="/start", description="Запустити бота"),
+        BotCommand(command="/setup", description="Швидкий старт"),
+        BotCommand(command="/model", description="Обрати мовну модель"),
+        BotCommand(command="/status", description="Перевірити налаштування"),
+        BotCommand(command="/help", description="Допомога з отриманням API-ключів"),
+    ]
+    await bot.set_my_commands(main_menu_commands, scope=BotCommandScopeDefault())
+
+
+async def main():
     telegram_bot = Bot(token=telegram.settings.token)
+    await set_main_menu(telegram_bot)
 
     global_storage = storage.abstract.FirebaseStorage()
     resolvers = Resolver(storage_manager=global_storage)
@@ -33,7 +46,6 @@ if __name__ == "__main__":
     dp.message.register(resolvers.setup_ai_start, Command("setup"))
     dp.message.register(resolvers.setup_ai_set_model, Command("model"))
     dp.message.register(resolvers.check_status, Command("status"))
-    dp.message.register(resolvers.menu, Command("menu"))
     dp.message.register(resolvers.help, Command("help"))
 
     # ** Обробники інлайн-кнопок **
@@ -79,5 +91,8 @@ if __name__ == "__main__":
 
     dp.message.register(resolvers.other)
 
-    # запускаємо обробку вхідних повідомлень
-    asyncio.run(dp.start_polling(telegram_bot))
+    await dp.start_polling(telegram_bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -81,10 +81,6 @@ class Resolver:
             await message.answer(constants.START_TEXT)
 
     @staticmethod
-    async def menu(message: Message):
-        await message.answer(constants.MENU_TEXT)
-
-    @staticmethod
     async def help(message: Message):
         await message.answer(constants.HELP_TEXT)
 
