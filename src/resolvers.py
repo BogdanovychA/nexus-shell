@@ -84,11 +84,11 @@ class Resolver:
 
         model = await state.get_value("model", default=AIModels.NONE)
 
-        if model == AIModels.NONE:  # Необхідно допрацювати
+        if model == AIModels.NONE:
             await message.answer("Робоча модель не визначена.\nОбери: /model")
             return None
 
-        if model not in AIModels:  # Необхідно допрацювати
+        if model not in AIModels:
             await message.answer(f"Поки я не вмію працювати з {model}")
             return None
 
@@ -109,12 +109,16 @@ class Resolver:
     async def start(self, message: Message, state: FSMContext):
 
         self.save_user(message)
-        await state.set_state(None)
+        # await state.set_state(None)
+        await state.clear()
         await state.update_data(model=AIModels.NONE)
 
-        await message.answer_photo(
-            photo=FSInputFile(self.LOGO_PATH), caption=self.START_TEXT
-        )
+        if self.LOGO_PATH.exists():
+            await message.answer_photo(
+                photo=FSInputFile(self.LOGO_PATH), caption=self.START_TEXT
+            )
+        else:
+            await message.answer(self.START_TEXT)
 
     async def menu(self, message: Message):
         await message.answer(self.MENU_TEXT)
@@ -154,28 +158,26 @@ class Resolver:
 
     async def set_model(self, callback: CallbackQuery, state: FSMContext):
 
+        await callback.answer()  # Прибираємо "годинник" завантаження на кнопці
+
         model = callback.data.split(":")[1]
 
         await state.update_data(model=model)
 
-        await callback.message.answer(f"Модель встановлено: {model}")
+        await callback.message.edit_text(f"✅ Модель встановлено: {model}")
 
         # Якщо це не прямий виклик, а ланцюжок налаштування бота через /setup
         if await state.get_state() == AISetup.waiting_for_model:
             await state.set_state(AISetup.waiting_for_token)
             await callback.message.answer(f"Введи API-ключ (токен) для {model}")
         else:  # Якщо це прямий виклик
-
             await self.check_status(
                 callback.message, state, user_id=callback.from_user.id
             )
-            # await state.set_state(Work.not_ready)
-            # await callback.message.answer(f"Перед початком роботи перевір налаштування: /status")
 
     async def check_status(
         self, message: Message, state: FSMContext, user_id: int | None = None
     ):
-
         model = await self.get_model(message, state)
         if model is None:
             # await message.answer("Модель не обрана.\nОбери: /model")
