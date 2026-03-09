@@ -95,13 +95,14 @@ class Resolver:
         return model
 
     async def save_ai_settings(
-        self, message: Message, model: AIModels, key: str
+        self, message: Message, state: FSMContext, model: AIModels, key: str
     ) -> None:
 
         value = message.text
         data = {model: {key: value}}
 
         self.storage_manager.update_user_fields(message.from_user.id, data)
+        await state.update_data(key=value)
 
         await message.answer(f"Налаштування для {model} збережено")
 
@@ -151,8 +152,7 @@ class Resolver:
             "Обери мовну модель:", reply_markup=self._create_model_buttons()
         )
 
-    @staticmethod
-    async def set_model(callback: CallbackQuery, state: FSMContext):
+    async def set_model(self, callback: CallbackQuery, state: FSMContext):
 
         model = callback.data.split(":")[1]
 
@@ -160,11 +160,21 @@ class Resolver:
 
         await callback.message.answer(f"Модель встановлено: {model}")
 
+        # Якщо це не прямий виклик, а ланцюжок налаштування бота через /setup
         if await state.get_state() == AISetup.waiting_for_model:
             await state.set_state(AISetup.waiting_for_token)
             await callback.message.answer(f"Введи API-ключ (токен) для {model}")
+        else:  # Якщо це прямий виклик
 
-    async def check_status(self, message: Message, state: FSMContext):
+            await self.check_status(
+                callback.message, state, user_id=callback.from_user.id
+            )
+            # await state.set_state(Work.not_ready)
+            # await callback.message.answer(f"Перед початком роботи перевір налаштування: /status")
+
+    async def check_status(
+        self, message: Message, state: FSMContext, user_id: int | None = None
+    ):
 
         model = await self.get_model(message, state)
         if model is None:
@@ -173,9 +183,10 @@ class Resolver:
 
         await message.answer(f"Поточна модель: {model}")
 
-        model_data = self.storage_manager.load_user_fields(
-            message.from_user.id, {model}
-        )
+        if user_id is None:
+            user_id = message.from_user.id
+
+        model_data = self.storage_manager.load_user_fields(user_id, {model})
 
         if not model_data:
             await message.answer("Модель не налаштована.\nНалаштуй: /setup")
@@ -193,11 +204,12 @@ class Resolver:
         text = (
             f"Генеральний промпт {model}:\n\n{prompt}"
             if prompt
-            else f"Промпт {model} не налаштований.\nНалаштуй: /setup"
+            else f"Генеральний промпт {model} не налаштований.\nНалаштуй: /setup"
         )
         await message.answer(text)
 
         if token and prompt:
+            await state.update_data(token=token, prompt=prompt)
             await message.answer(f"Можна працювати з {model}")
             await state.set_state(Work.ready)
 
@@ -215,7 +227,7 @@ class Resolver:
             await state.set_state(None)
             return
 
-        await self.save_ai_settings(message, model, "token")
+        await self.save_ai_settings(message, state, model, "token")
 
         await message.answer("Введи генеральний промпт")
         await state.set_state(AISetup.waiting_for_prompt)
@@ -228,12 +240,12 @@ class Resolver:
             await state.set_state(None)
             return
 
-        await self.save_ai_settings(message, model, "prompt")
+        await self.save_ai_settings(message, state, model, "prompt")
 
         await message.answer(f"Можна працювати з {model}")
         await state.set_state(Work.ready)
 
-    async def query(self, message: Message, state):
+    async def query(self, message: Message, state: FSMContext):
 
         model = await self.get_model(message, state)
         if model is None:
@@ -253,14 +265,24 @@ class Resolver:
                 )
                 return
 
-        await message.answer(f"Завантажую API-ключ та генеральний промпт...")
+        # await message.answer(f"Завантажую API-ключ та генеральний промпт...")
+        #
+        # model_data = self.storage_manager.load_user_fields(
+        #     message.from_user.id, {model}
+        # )
+        #
+        # token = model_data[model]["token"]
+        # global_prompt = model_data[model]["prompt"]
 
-        model_data = self.storage_manager.load_user_fields(
-            message.from_user.id, {model}
-        )
+        await message.answer(f"Зчитую API-ключ та генеральний промпт...")
 
-        token = model_data[model]["token"]
-        global_prompt = model_data[model]["prompt"]
+        token = await state.get_value("token", default=None)
+        global_prompt = await state.get_value("prompt", default=None)
+
+        if token is None or global_prompt is None:  # Перестраховка :)
+            await message.answer(f"Модель {model} не налаштована.\nНалаштуй: /setup")
+            return
+
         local_prompt = message.text
 
         await message.answer(
