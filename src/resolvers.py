@@ -267,31 +267,40 @@ class Resolver:
                 )
                 return
 
-        # await message.answer(f"Завантажую API-ключ та генеральний промпт...")
-        #
-        # model_data = self.storage_manager.load_user_fields(
-        #     message.from_user.id, {model}
-        # )
-        #
-        # token = model_data[model]["token"]
-        # global_prompt = model_data[model]["prompt"]
-
         await message.answer(f"Зчитую API-ключ та генеральний промпт...")
 
         token = await state.get_value("token", default=None)
-        global_prompt = await state.get_value("prompt", default=None)
+        prompt = await state.get_value("prompt", default=None)
 
-        if token is None or global_prompt is None:  # Перестраховка :)
-            await message.answer(f"Модель {model} не налаштована.\nНалаштуй: /setup")
-            return
+        if token is None or prompt is None:  # Перестраховка :)
+            await message.answer(
+                f"Налаштування в кеші не знайдено. Читаю базу даних..."
+            )
+            await message.answer(f"Завантажую API-ключ та генеральний промпт...")
 
-        local_prompt = message.text
+            model_data = self.storage_manager.load_user_fields(
+                message.from_user.id, {model}
+            )
+
+            token = model_data[model]["token"]
+            prompt = model_data[model]["prompt"]
+
+            if not token or not prompt:
+                await message.answer(
+                    f"Модель {model} не налаштована.\nНалаштуй: /setup"
+                )
+                await state.set_state(None)
+                return
+
+            await state.update_data(token=token, prompt=prompt)
 
         await message.answer(
-            f"Звертаюся до {model}... Запит може тривати до 2-3 хвилин..."
+            f"⏳ Звертаюся до {model}... Запит може тривати до 2-3 хвилин..."
         )
 
-        text = await client.query(token, global_prompt, local_prompt)
+        text = await client.query(
+            token=token, global_prompt=prompt, local_prompt=message.text
+        )
 
         # Обмеження Телеграму щодо довжини
         try:
@@ -322,19 +331,6 @@ class Resolver:
     #         await utils.save_file(message, bot, filetype, base_path=self.BASE_PATH)
     #     else:
     #         await message.answer("Ви не адмін :(")
-    #
-    # async def sticker(self, message: Message):
-    #     await message.answer("sticker")
-    #
-    # async def contact(self, message: Message):
-    #     await message.answer("contact")
-    #
-    # async def location(self, message: Message):
-    #     await message.answer("location")
-    #
-    # async def animation(self, message: Message):
-    #     await message.answer("animation")
-    #
 
     @staticmethod
     async def other(message: Message):
