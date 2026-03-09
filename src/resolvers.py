@@ -311,5 +311,7 @@ class Resolver:
     # async def animation(self, message: Message):
     #     await message.answer("animation")
     #
-    async def other(self, message: Message):
+
+    @staticmethod
+    async def other(message: Message):
         await message.answer("Я працюю лише з текстовими повідомленнями")
