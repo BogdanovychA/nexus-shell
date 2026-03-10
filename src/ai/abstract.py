@@ -27,6 +27,8 @@ class Claude(AIModel):
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
+        text = ""
+
         token = token.strip()
         if not token:
             return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
@@ -50,28 +52,30 @@ class Claude(AIModel):
                 f"API-ключ (токен) {self.NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(e)
+            print(str(e))
 
         except anthropic.AuthenticationError as e:
             text = (
                 f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(e)
+            print(str(e))
 
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(e)
+            print(str(e))
 
         return text
 
 
-class ChatGPT:
+class ChatGPT(AIModel):
 
     NAME = "ChatGPT"
     TOKEN_URL = constants.CHATGPT_URL
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
+
+        text = ""
 
         token = token.strip()
 
@@ -103,10 +107,10 @@ class ChatGPT:
                 f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(e)
+            print(str(e))
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(e)
+            print(str(e))
 
         return text
 
@@ -118,6 +122,7 @@ class Gemini(AIModel):
 
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
+        text = ""
         token = token.strip()
 
         if not token:
@@ -163,10 +168,10 @@ class Gemini(AIModel):
 
         except ValueError as e:
             text = f"Некоректний формат токена.\n\n{str(e)}"
-            print(e)
+            print(str(e))
 
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(e)
+            print(str(e))
 
         return text

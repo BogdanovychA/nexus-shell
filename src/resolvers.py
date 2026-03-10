@@ -39,12 +39,12 @@ LOGO_PATH = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
 router = Router()
 
 
-def save_user(
+async def save_user(
     message: Message, storage_manager: storage.abstract.StorageManager
 ) -> None:
 
     user = User.model_validate(message.from_user)
-    storage_manager.save_user(user)
+    await storage_manager.save_user(user)
 
 
 async def get_model(message: Message, state: FSMContext) -> AIModels | None:
@@ -73,7 +73,7 @@ async def save_ai_settings(
     value = message.text
     data = {model: {key: value}}
 
-    storage_manager.update_user_fields(message.from_user.id, data)
+    await storage_manager.update_user_fields(message.from_user.id, data)
     await state.update_data(**{key: value})
 
     await message.answer(f"Налаштування для {model} збережено")
@@ -111,7 +111,7 @@ async def start_command(
     storage_manager: storage.abstract.StorageManager,
 ):
 
-    save_user(message, storage_manager)
+    await save_user(message, storage_manager)
     # await state.set_state(None)
     await state.clear()
     await state.update_data(model=AIModels.NONE)
@@ -152,7 +152,7 @@ async def check_status(
     if user_id is None:
         user_id = message.from_user.id
 
-    model_data = storage_manager.load_user_fields(user_id, {model})
+    model_data = await storage_manager.load_user_fields(user_id, {model})
 
     if not model_data:
         await message.answer("Модель не налаштована.\nНалаштуй: /setup")
@@ -287,7 +287,9 @@ async def query(
         await message.answer(f"Налаштування в кеші не знайдено. Читаю базу даних...")
         await message.answer(f"Завантажую API-ключ та генеральний промпт...")
 
-        model_data = storage_manager.load_user_fields(message.from_user.id, {model})
+        model_data = await storage_manager.load_user_fields(
+            message.from_user.id, {model}
+        )
 
         token = model_data[model]["token"]
         prompt = model_data[model]["prompt"]
@@ -363,6 +365,7 @@ async def default_text(message: Message):
 #     await utils.save_file(message, bot, filetype, base_path=DOWNLOAD_PATH)
 
 
+# ** Сміттєприймач :) **
 @router.message()
 async def other(message: Message):
     await message.answer("Я працюю лише з текстовими повідомленнями")

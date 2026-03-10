@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -14,22 +15,22 @@ if TYPE_CHECKING:
 class StorageManager(ABC):
 
     @abstractmethod
-    def save_user(self, user: User):
+    async def save_user(self, user: User):
         """Збереження користувача в БД"""
         pass
 
     @abstractmethod
-    def load_user(self, user_id: int) -> User | None:
+    async def load_user(self, user_id: int) -> User | None:
         """Завантаження користувача з БД"""
         pass
 
     @abstractmethod
-    def update_user_fields(self, user_id: int, fields: dict) -> None:
+    async def update_user_fields(self, user_id: int, fields: dict) -> None:
         """Оновлення даних користувача"""
         pass
 
     @abstractmethod
-    def load_user_fields(
+    async def load_user_fields(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
         """Завантаження даних користувача"""
@@ -38,16 +39,16 @@ class StorageManager(ABC):
 
 class FirebaseStorage(StorageManager):
 
-    def save_user(self, user: User):
-        firebase.save_user(user)
+    async def save_user(self, user: User):
+        await asyncio.to_thread(firebase.save_user, user)
 
-    def load_user(self, user_id: int) -> User | None:
-        return firebase.load_user(user_id)
+    async def load_user(self, user_id: int) -> User | None:
+        return await asyncio.to_thread(firebase.load_user, user_id)
 
-    def update_user_fields(self, user_id: int, fields: dict) -> None:
-        firebase.update_user_fields(user_id, fields)
+    async def update_user_fields(self, user_id: int, fields: dict) -> None:
+        await asyncio.to_thread(firebase.update_user_fields, user_id, fields)
 
-    def load_user_fields(
+    async def load_user_fields(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
-        return firebase.load_user_fields(user_id, fields)
+        return await asyncio.to_thread(firebase.load_user_fields, user_id, fields)
