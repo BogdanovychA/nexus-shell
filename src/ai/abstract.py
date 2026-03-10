@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from abc import ABC, abstractmethod
 
 import anthropic
@@ -9,11 +10,18 @@ from google.genai import errors, types
 
 from utils import constants
 
+logger = logging.getLogger(__name__)
+
 
 class AIModel(ABC):
 
     NAME = "AI"
     TOKEN_URL = "https://google.com :)"
+
+    @staticmethod
+    def clean_token(token: str) -> str | None:
+        token = token.strip()
+        return token if token else None
 
     @abstractmethod
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
@@ -29,8 +37,7 @@ class Claude(AIModel):
 
         text = ""
 
-        token = token.strip()
-        if not token:
+        if not (token := self.clean_token(token)):
             return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
 
         try:
@@ -52,18 +59,18 @@ class Claude(AIModel):
                 f"API-ключ (токен) {self.NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(str(e))
+            logger.warning("UnicodeEncodeError in %s: %s", self.NAME, e)
 
         except anthropic.AuthenticationError as e:
             text = (
                 f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(str(e))
+            logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(str(e))
+            logger.exception("Unexpected error in %s", self.NAME)
 
         return text
 
@@ -77,9 +84,7 @@ class ChatGPT(AIModel):
 
         text = ""
 
-        token = token.strip()
-
-        if not token:
+        if not (token := self.clean_token(token)):
             return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
 
         try:
@@ -107,10 +112,11 @@ class ChatGPT(AIModel):
                 f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
                 + f"Отримати можна тут: {self.TOKEN_URL}"
             )
-            print(str(e))
+            logger.warning("AuthenticationError in %s: %s", self.NAME, e)
+
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(str(e))
+            logger.exception("Unexpected error in %s", self.NAME)
 
         return text
 
@@ -123,9 +129,8 @@ class Gemini(AIModel):
     async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
 
         text = ""
-        token = token.strip()
 
-        if not token:
+        if not (token := self.clean_token(token)):
             return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
 
         try:
@@ -164,14 +169,14 @@ class Gemini(AIModel):
             else:
                 text = f"{constants.FORWARD_TEXT}\nПомилка клієнта {self.NAME} (API)"
 
-            print(error_msg)
+            logger.warning("ClientError in %s: %s", self.NAME, error_msg)
 
         except ValueError as e:
             text = f"Некоректний формат токена.\n\n{str(e)}"
-            print(str(e))
+            logger.warning("ValueError (invalid token format) in %s: %s", self.NAME, e)
 
         except Exception as e:
             text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
-            print(str(e))
+            logger.exception("Unexpected error in %s", self.NAME)
 
         return text
