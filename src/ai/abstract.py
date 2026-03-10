@@ -149,19 +149,21 @@ class Gemini(AIModel):
             text = response.text.strip()
 
         except errors.ClientError as e:
-            error_msg = str(e).lower()
+            error_msg = str(e)
 
-            if "API_KEY_INVALID".lower() in error_msg or "400" in error_msg:
+            if "API_KEY_INVALID".lower() in error_msg.lower() or "400" in error_msg:
                 text = (
                     f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
                     + f"Отримати можна тут: {self.TOKEN_URL}"
                 )
-            elif "RESOURCE_EXHAUSTED".lower() in error_msg or "429" in error_msg:
+            elif (
+                "RESOURCE_EXHAUSTED".lower() in error_msg.lower() or "429" in error_msg
+            ):
                 text = (
                     f"Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\n"
                     + f"Отримати можна тут: {self.TOKEN_URL}"
                 )
-            elif "API_KEY_INVALID".lower() in error_msg or "403" in error_msg:
+            elif "API_KEY_INVALID".lower() in error_msg.lower() or "403" in error_msg:
                 text = (
                     f"Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\n"
                     + f"Отримати можна тут: {self.TOKEN_URL}"
