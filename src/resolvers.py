@@ -10,7 +10,7 @@ from aiogram.filters import Command
 from aiogram.types import FSInputFile
 
 from config import bot
-from utils import constants  # , utils
+from utils import constants, encryption  # , utils
 
 # from models import FileType
 # from config import telegram
@@ -75,10 +75,14 @@ async def save_ai_settings(
 ) -> None:
 
     value = message.text
-    data = {model: {key: value}}
 
+    await state.update_data(**{key: value})  # зберігаємо оригінал у кеш (Redis)
+
+    if key == "token":
+        value = encryption.encrypt(value)  # шифруємо перед записом у БД
+
+    data = {model: {key: value}}
     await storage_manager.update_user_fields(message.from_user.id, data)
-    await state.update_data(**{key: value})
 
     await message.answer(f"Налаштування для {model} збережено")
 
@@ -162,7 +166,16 @@ async def check_status(
         await message.answer("Модель не налаштована.\nНалаштуй: /setup")
         return
 
-    token = model_data[model]["token"] if "token" in model_data[model] else ""
+    encrypted_token = model_data[model]["token"] if "token" in model_data[model] else ""
+
+    token = encryption.decrypt(encrypted_token)
+
+    if token is None:
+        await message.answer(
+            f"Помилка при дешифруванні токена для {model}. Налаштуй заново: /setup"
+        )
+        return
+
     text = (
         f"API-ключ (токен) {model}:\n{token}"
         if token
@@ -295,7 +308,9 @@ async def query(
             message.from_user.id, {model}
         )
 
-        token = model_data[model]["token"]
+        encrypted_token = model_data[model]["token"]
+        token = encryption.decrypt(encrypted_token)
+
         prompt = model_data[model]["prompt"]
 
         if not token or not prompt:
