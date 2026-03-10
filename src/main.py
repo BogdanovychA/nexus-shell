@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+
 import asyncio
 
 from aiogram import Bot, Dispatcher
