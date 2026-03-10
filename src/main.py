@@ -16,8 +16,8 @@ async def set_main_menu(bot: Bot):
     main_menu_commands = [
         BotCommand(command="/start", description="Запустити бота"),
         BotCommand(command="/setup", description="Швидкий старт"),
-        BotCommand(command="/model", description="Обрати мовну модель"),
-        BotCommand(command="/status", description="Перевірити налаштування"),
+        BotCommand(command="/model", description="Змінити мовну модель"),
+        BotCommand(command="/status", description="Перевірити поточні налаштування"),
         BotCommand(command="/help", description="Допомога з отриманням API-ключів"),
     ]
     await bot.set_my_commands(main_menu_commands, scope=BotCommandScopeDefault())

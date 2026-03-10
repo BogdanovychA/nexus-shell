@@ -74,7 +74,7 @@ async def save_ai_settings(
     data = {model: {key: value}}
 
     storage_manager.update_user_fields(message.from_user.id, data)
-    await state.update_data(key=value)
+    await state.update_data(**{key: value})
 
     await message.answer(f"Налаштування для {model} збережено")
 
