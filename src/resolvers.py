@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from aiogram import F, Router
@@ -35,6 +36,9 @@ from models import AIModels, AISetup, User, Work
 
 # DOWNLOAD_PATH = bot.settings.base_dir / "downloads"
 LOGO_PATH = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
+
+
+logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -316,11 +320,13 @@ async def query(
     except TelegramBadRequest as e:
         error_message = str(e)
         if "too long" in error_message.lower() or "too_long" in error_message.lower():
+            logger.warning("TelegramBadRequest: message too long, sending as file")
             file = BufferedInputFile(text.encode("utf-8"), filename="result.txt")
             await message.answer_document(
                 file, caption="Відповідь занадто довга. Надсилаю файлом."
             )
         else:
+            logger.exception("TelegramBadRequest unexpected error")
             file = BufferedInputFile(
                 error_message.encode("utf-8"), filename="error.txt"
             )
@@ -328,7 +334,6 @@ async def query(
                 file,
                 caption=f"Непередбачувана помилка при зверненні до {model}. {constants.FORWARD_TEXT}",
             )
-            print(error_message)
 
 
 # ** Обробник за замовчуванням **
