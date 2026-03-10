@@ -107,6 +107,7 @@ journalctl -u nexus-shell -f
 
 ---
 
-## Інше
+## Лінки
 
+* [Бот в Telegram](https://t.me/NexusShellBot)
 * [Підтримати проєкт](https://send.monobank.ua/jar/8Qn1woNnC7)
