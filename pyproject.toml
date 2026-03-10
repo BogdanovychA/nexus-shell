@@ -1,6 +1,6 @@
 [project]
 name = "nexus-shell"
-version = "0.1.0"
+version = "1.0.0"
 description = "Nexus Shell AI Agent"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -12,13 +12,13 @@ dependencies = [
     "openai==2.26.0",
     "pydantic-settings==2.13.1",
     "pydentic==0.0.1.dev3",
-    "redis==7.2.1",
+    "redis==7.3.0",
 ]
 
 [dependency-groups]
 dev = [
     "pre_commit>=4.5.1",
-    "black>=26.1.0",
+    "black>=26.3.0",
     "isort>=8.0.1",
 ]
 
