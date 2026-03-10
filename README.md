@@ -10,8 +10,16 @@ Telegram-бот для взаємодії з провідними мовними
 - Персональні налаштування для кожного користувача (API-ключ + системний промпт)
 - Збереження налаштувань у **Firebase Firestore**
 - Кешування стану у **Redis**
+- API-ключі зберігаються у **зашифрованому вигляді** (AES-128, Fernet)
 - Автоматична відправка довгих відповідей як файл (обхід обмежень Telegram)
 - FSM-логіка для покрокового налаштування бота
+
+---
+
+## 🔒 Безпека
+
+API-ключі користувачів шифруються перед збереженням у базі даних (AES-128 через Fernet).
+У відкритому вигляді ключ існує лише в пам'яті під час запиту до AI-провайдера.
 
 ---
 
@@ -101,9 +109,9 @@ journalctl -u nexus-shell -f
 
 ## 🔑 Отримання API-ключів
 
-- **Gemini** — [Google AI Studio](https://aistudio.google.com/app/apikey)
-- **ChatGPT** — [OpenAI Platform](https://platform.openai.com/api-keys)
-- **Claude** — [Anthropic Console](https://console.anthropic.com/)
+- **Gemini** — [Google AI Studio](https://aistudio.google.com/app/api-keys)
+- **ChatGPT** — [OpenAI Platform](https://platform.openai.com/account/api-keys)
+- **Claude** — [Anthropic Console](https://platform.claude.com/settings/keys)
 
 ---
 
