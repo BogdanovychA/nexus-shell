@@ -4,7 +4,7 @@ CLAUDE_URL = "https://platform.claude.com/settings/keys"
 CHATGPT_URL = "https://platform.openai.com/account/api-keys"
 GEMINI_URL = "https://aistudio.google.com/app/api-keys"
 
-FORWARD_TEXT = "Надішли розробнику: @bogdanovych"
+FORWARD_TEXT = "Надішли розробнику: @BogdanovychBot"
 
 START_TEXT = (
     "🤖 Привіт! Мене звати Nexus Shell | AI Agent\n\n"
