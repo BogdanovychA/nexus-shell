@@ -38,7 +38,9 @@ class Claude(AIModel):
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return "API-ключ (токен) {NAME} відсутній у налаштуваннях.\nНалаштуй: /setup".format(
+                NAME=self.NAME
+            )
 
         try:
             client = anthropic.AsyncAnthropic(api_key=token)
@@ -55,21 +57,25 @@ class Claude(AIModel):
             return response.content[0].text.strip()
 
         except UnicodeEncodeError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = "API-ключ (токен) {NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n".format(
+                NAME=self.NAME
+            ) + "Отримати можна тут: {TOKEN_URL}".format(
+                TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("UnicodeEncodeError in %s: %s", self.NAME, e)
 
         except anthropic.AuthenticationError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
+                NAME=self.NAME
+            ) + "Отримати можна тут: {TOKEN_URL}".format(
+                TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = "{FORWARD_TEXT}\nНеочікувана помилка при зверненні до {NAME}:\n\n{e}".format(
+                FORWARD_TEXT=constants.FORWARD_TEXT, NAME=self.NAME, e=str(e)
+            )
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text
@@ -85,7 +91,9 @@ class ChatGPT(AIModel):
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return "API-ключ (токен) {NAME} відсутній у налаштуваннях.\nНалаштуй: /setup".format(
+                NAME=self.NAME
+            )
 
         try:
             client = openai.AsyncOpenAI(api_key=token)
@@ -108,14 +116,17 @@ class ChatGPT(AIModel):
             text = response.choices[0].message.content.strip()
 
         except openai.AuthenticationError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
+                NAME=self.NAME
+            ) + "Отримати можна тут: {TOKEN_URL}".format(
+                TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = "{FORWARD_TEXT}\nНеочікувана помилка при зверненні до {NAME}:\n\n{e}".format(
+                FORWARD_TEXT=constants.FORWARD_TEXT, NAME=self.NAME, e=str(e)
+            )
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text
@@ -131,7 +142,9 @@ class Gemini(AIModel):
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return "API-ключ (токен) {NAME} відсутній у налаштуваннях.\nНалаштуй: /setup".format(
+                NAME=self.NAME
+            )
 
         try:
             client = genai.Client(api_key=token)
@@ -152,33 +165,38 @@ class Gemini(AIModel):
             error_msg = str(e)
 
             if "API_KEY_INVALID".lower() in error_msg.lower() or "400" in error_msg:
-                text = (
-                    f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+                text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
+                    NAME=self.NAME
+                ) + "Отримати можна тут: {TOKEN_URL}".format(
+                    TOKEN_URL=self.TOKEN_URL
                 )
             elif (
                 "RESOURCE_EXHAUSTED".lower() in error_msg.lower() or "429" in error_msg
             ):
                 text = (
-                    f"Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+                    "Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\n"
+                    + "Отримати можна тут: {TOKEN_URL}".format(TOKEN_URL=self.TOKEN_URL)
                 )
             elif "API_KEY_INVALID".lower() in error_msg.lower() or "403" in error_msg:
                 text = (
-                    f"Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+                    "Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\n"
+                    + "Отримати можна тут: {TOKEN_URL}".format(TOKEN_URL=self.TOKEN_URL)
                 )
             else:
-                text = f"{constants.FORWARD_TEXT}\nПомилка клієнта {self.NAME} (API)"
+                text = "{FORWARD_TEXT}\nПомилка клієнта {NAME} (API)".format(
+                    FORWARD_TEXT=constants.FORWARD_TEXT, NAME=self.NAME
+                )
 
             logger.warning("ClientError in %s: %s", self.NAME, error_msg)
 
         except ValueError as e:
-            text = f"Некоректний формат токена.\n\n{str(e)}"
+            text = "Некоректний формат токена.\n\n{e}".format(e=str(e))
             logger.warning("ValueError (invalid token format) in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = "{FORWARD_TEXT}\nНеочікувана помилка при зверненні до {NAME}:\n\n{e}".format(
+                FORWARD_TEXT=constants.FORWARD_TEXT, NAME=self.NAME, e=str(e)
+            )
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text

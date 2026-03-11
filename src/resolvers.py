@@ -60,7 +60,7 @@ async def get_model(message: Message, state: FSMContext) -> AIModels | None:
         return None
 
     if model not in AIModels:
-        await message.answer(f"Поки я не вмію працювати з {model}")
+        await message.answer("Поки я не вмію працювати з {model}".format(model=model))
         return None
 
     return model
@@ -84,7 +84,7 @@ async def save_ai_settings(
     data = {model: {key: value}}
     await storage_manager.update_user_fields(message.from_user.id, data)
 
-    await message.answer(f"Налаштування для {model} збережено")
+    await message.answer("Налаштування для {model} збережено".format(model=model))
 
 
 def _create_model_buttons():
@@ -155,7 +155,7 @@ async def check_status(
         # await message.answer("Модель не обрана.\nОбери: /model")
         return
 
-    await message.answer(f"Поточна модель: {model}")
+    await message.answer("Поточна модель: {model}".format(model=model))
 
     if user_id is None:
         user_id = message.from_user.id
@@ -172,28 +172,34 @@ async def check_status(
 
     if token is None:
         await message.answer(
-            f"Помилка при дешифруванні токена для {model}. Налаштуй заново: /setup"
+            "Помилка при дешифруванні токена для {model}. Налаштуй заново: /setup".format(
+                model=model
+            )
         )
         return
 
     text = (
-        f"API-ключ (токен) {model}:\n{token}"
+        "API-ключ (токен) {model}:\n{token}".format(model=model, token=token)
         if token
-        else f"API-ключ (токен) {model} не налаштований.\nНалаштуй: /setup"
+        else "API-ключ (токен) {model} не налаштований.\nНалаштуй: /setup".format(
+            model=model
+        )
     )
     await message.answer(text)
 
     prompt = model_data[model]["prompt"] if "prompt" in model_data[model] else ""
     text = (
-        f"Генеральний промпт {model}:\n\n{prompt}"
+        "Генеральний промпт {model}:\n\n{prompt}".format(model=model, prompt=prompt)
         if prompt
-        else f"Генеральний промпт {model} не налаштований.\nНалаштуй: /setup"
+        else "Генеральний промпт {model} не налаштований.\nНалаштуй: /setup".format(
+            model=model
+        )
     )
     await message.answer(text)
 
     if token and prompt:
         await state.update_data(token=token, prompt=prompt)
-        await message.answer(f"Можна працювати з {model}")
+        await message.answer("Можна працювати з {model}".format(model=model))
         await state.set_state(Work.ready)
 
 
@@ -217,12 +223,16 @@ async def set_model(
 
     await state.update_data(model=model)
 
-    await callback.message.edit_text(f"✅ Модель встановлено: {model}")
+    await callback.message.edit_text(
+        "✅ Модель встановлено: {model}".format(model=model)
+    )
 
     # Якщо це не прямий виклик, а ланцюжок налаштування бота через /setup
     if await state.get_state() == AISetup.waiting_for_model:
         await state.set_state(AISetup.waiting_for_token)
-        await callback.message.answer(f"Введи API-ключ (токен) для {model}")
+        await callback.message.answer(
+            "Введи API-ключ (токен) для {model}".format(model=model)
+        )
     else:  # Якщо це прямий виклик
         await check_status(
             callback.message, state, storage_manager, user_id=callback.from_user.id
@@ -264,7 +274,7 @@ async def setup_ai_set_prompt(
 
     await save_ai_settings(message, state, storage_manager, model, "prompt")
 
-    await message.answer(f"Можна працювати з {model}")
+    await message.answer("Можна працювати з {model}".format(model=model))
     await state.set_state(Work.ready)
 
 
@@ -278,7 +288,7 @@ async def query(
 
     model = await get_model(message, state)
     if model is None:
-        await message.answer(f"Щось пішло не так. Налаштуй бота: /setup")
+        await message.answer("Щось пішло не так. Налаштуй бота: /setup")
         return
 
     clients = {
@@ -289,20 +299,24 @@ async def query(
 
     client_class = clients.get(model)
     if not client_class:
-        await message.answer(f"Я поки не вмію працювати з {model}.\nОбери іншу: /model")
+        await message.answer(
+            "Я поки не вмію працювати з {model}.\nОбери іншу: /model".format(
+                model=model
+            )
+        )
         return
 
     client = client_class()
 
-    await message.answer(f"Зчитую API-ключ та генеральний промпт...")
+    await message.answer("Зчитую API-ключ та генеральний промпт...")
 
     data = await state.get_data()
     token = data.get("token")
     prompt = data.get("prompt")
 
     if token is None or prompt is None:  # Перестраховка :)
-        await message.answer(f"Налаштування в кеші не знайдено. Читаю базу даних...")
-        await message.answer(f"Завантажую API-ключ та генеральний промпт...")
+        await message.answer("Налаштування в кеші не знайдено. Читаю базу даних...")
+        await message.answer("Завантажую API-ключ та генеральний промпт...")
 
         model_data = await storage_manager.load_user_fields(
             message.from_user.id, {model}
@@ -314,14 +328,18 @@ async def query(
         prompt = model_data[model]["prompt"]
 
         if not token or not prompt:
-            await message.answer(f"Модель {model} не налаштована.\nНалаштуй: /setup")
+            await message.answer(
+                "Модель {model} не налаштована.\nНалаштуй: /setup".format(model=model)
+            )
             await state.set_state(None)
             return
 
         await state.update_data(token=token, prompt=prompt)
 
     answer_message = await message.answer(
-        f"⏳ Звертаюся до {model}... Запит може тривати до 2-3 хвилин..."
+        "⏳ Звертаюся до {model}... Запит може тривати до 2-3 хвилин...".format(
+            model=model
+        )
     )
 
     text = await client.query(
@@ -347,7 +365,9 @@ async def query(
             )
             await message.answer_document(
                 file,
-                caption=f"Непередбачувана помилка при зверненні до {model}. {constants.FORWARD_TEXT}",
+                caption="Непередбачувана помилка при зверненні до {model}. {FORWARD_TEXT}".format(
+                    model=model, FORWARD_TEXT=constants.FORWARD_TEXT
+                ),
             )
 
 
