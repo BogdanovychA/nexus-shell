@@ -35,7 +35,8 @@ async def set_main_menu(the_bot: Bot):
 async def main():
     telegram_bot = Bot(token=telegram.settings.token)
 
-    # await telegram_bot.delete_webhook(drop_pending_updates=True)  # Не відповідати на повідомлення, поки бот був вимкнений
+    # # Не відповідати на повідомлення, що надійшли, поки бот був вимкнений
+    # await telegram_bot.delete_webhook(drop_pending_updates=True)
 
     await set_main_menu(telegram_bot)
 

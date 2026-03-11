@@ -922,9 +922,9 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "black", specifier = ">=26.3.0" },
-    { name = "isort", specifier = ">=8.0.1" },
-    { name = "pre-commit", specifier = ">=4.5.1" },
+    { name = "black", specifier = "==26.3.0" },
+    { name = "isort", specifier = "==8.0.1" },
+    { name = "pre-commit", specifier = "==4.5.1" },
 ]
 
 [[package]]
