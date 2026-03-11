@@ -18,6 +18,7 @@ from utils import constants, encryption  # , utils
 
 if TYPE_CHECKING:
     import storage.abstract
+    from aiogram_i18n import I18nContext
 
     # from aiogram import Bot
 
@@ -117,6 +118,7 @@ async def start_command(
     message: Message,
     state: FSMContext,
     storage_manager: storage.abstract.StorageManager,
+    i18n: I18nContext,
 ):
 
     await save_user(message, storage_manager)
@@ -126,10 +128,10 @@ async def start_command(
 
     if LOGO_PATH.exists():
         await message.answer_photo(
-            photo=FSInputFile(LOGO_PATH), caption=constants.START_TEXT
+            photo=FSInputFile(LOGO_PATH), caption=i18n.get("info-start-text")
         )
     else:
-        await message.answer(constants.START_TEXT)
+        await message.answer(i18n.get("info-start-text"))
 
 
 @router.message(Command("help"))

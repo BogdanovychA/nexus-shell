@@ -57,18 +57,14 @@ class Claude(AIModel):
             return response.content[0].text.strip()
 
         except UnicodeEncodeError as e:
-            text = "API-ключ (токен) {NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n".format(
-                NAME=self.NAME
-            ) + "Отримати можна тут: {TOKEN_URL}".format(
-                TOKEN_URL=self.TOKEN_URL
+            text = "API-ключ (токен) {NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                NAME=self.NAME, TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("UnicodeEncodeError in %s: %s", self.NAME, e)
 
         except anthropic.AuthenticationError as e:
-            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
-                NAME=self.NAME
-            ) + "Отримати можна тут: {TOKEN_URL}".format(
-                TOKEN_URL=self.TOKEN_URL
+            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                NAME=self.NAME, TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
@@ -116,10 +112,8 @@ class ChatGPT(AIModel):
             text = response.choices[0].message.content.strip()
 
         except openai.AuthenticationError as e:
-            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
-                NAME=self.NAME
-            ) + "Отримати можна тут: {TOKEN_URL}".format(
-                TOKEN_URL=self.TOKEN_URL
+            text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                NAME=self.NAME, TOKEN_URL=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
@@ -165,22 +159,18 @@ class Gemini(AIModel):
             error_msg = str(e)
 
             if "API_KEY_INVALID".lower() in error_msg.lower() or "400" in error_msg:
-                text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n".format(
-                    NAME=self.NAME
-                ) + "Отримати можна тут: {TOKEN_URL}".format(
-                    TOKEN_URL=self.TOKEN_URL
+                text = "API-ключ (токен) {NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                    NAME=self.NAME, TOKEN_URL=self.TOKEN_URL
                 )
             elif (
                 "RESOURCE_EXHAUSTED".lower() in error_msg.lower() or "429" in error_msg
             ):
-                text = (
-                    "Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\n"
-                    + "Отримати можна тут: {TOKEN_URL}".format(TOKEN_URL=self.TOKEN_URL)
+                text = "Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                    TOKEN_URL=self.TOKEN_URL
                 )
             elif "API_KEY_INVALID".lower() in error_msg.lower() or "403" in error_msg:
-                text = (
-                    "Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\n"
-                    + "Отримати можна тут: {TOKEN_URL}".format(TOKEN_URL=self.TOKEN_URL)
+                text = "Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\nОтримати можна тут: {TOKEN_URL}".format(
+                    TOKEN_URL=self.TOKEN_URL
                 )
             else:
                 text = "{FORWARD_TEXT}\nПомилка клієнта {NAME} (API)".format(
