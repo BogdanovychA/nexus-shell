@@ -10,7 +10,7 @@ from aiogram.filters import Command
 from aiogram.types import FSInputFile
 
 from config import bot
-from utils import encryption  # , utils
+from utils import constants, encryption  # , utils
 
 # from models import FileType
 # from config import telegram
@@ -138,7 +138,14 @@ async def start_command(
 
 @router.message(Command("help"))
 async def help_command(message: Message, i18n: I18nContext):
-    await message.answer(i18n.get("info-help-text"))
+    await message.answer(
+        i18n.get(
+            "info-help-text",
+            gemini_url=constants.GEMINI_URL,
+            claude_url=constants.CLAUDE_URL,
+            chatgpt_url=constants.CHATGPT_URL,
+        )
+    )
 
 
 @router.message(Command("model"))
