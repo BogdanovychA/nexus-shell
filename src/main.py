@@ -75,6 +75,10 @@ async def set_main_menu(the_bot: Bot, i18n_core: BaseCore):
     )
 
     for lang in locales:
+
+        if lang == default_locale:
+            continue
+
         translator = i18n_core.get_translator(locale=lang)
 
         await the_bot.set_my_commands(

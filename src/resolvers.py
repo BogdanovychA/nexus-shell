@@ -116,6 +116,20 @@ def _create_model_buttons():
     return builder.as_markup()
 
 
+def _create_locale_buttons():
+    builder = InlineKeyboardBuilder()
+
+    for lang in LANGUAGES:
+
+        builder.add(
+            InlineKeyboardButton(text=lang.upper(), callback_data=f"locale:{lang}")
+        )
+
+    builder.adjust(1)  # По одній в рядок
+
+    return builder.as_markup()
+
+
 # ** Обробники команд **
 @router.message(Command("start"))
 async def start_command(
@@ -235,19 +249,6 @@ async def locale_command(
     message: Message,
     i18n: I18nContext,
 ):
-
-    def _create_locale_buttons():
-        builder = InlineKeyboardBuilder()
-
-        for lang in LANGUAGES:
-
-            builder.add(
-                InlineKeyboardButton(text=lang.upper(), callback_data=f"locale:{lang}")
-            )
-
-        builder.adjust(1)  # По одній в рядок
-
-        return builder.as_markup()
 
     await message.answer(
         i18n.get("locale-select"), reply_markup=_create_locale_buttons()
