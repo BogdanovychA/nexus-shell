@@ -129,7 +129,9 @@ async def main():
     dp = Dispatcher(storage=local_storage, storage_manager=global_storage)
 
     i18n_middleware = I18nMiddleware(
-        core=FluentRuntimeCore(path=bot.settings.base_dir / "locales" / "{locale}"),
+        core=FluentRuntimeCore(
+            path=bot.settings.base_dir / "locales" / "{locale}", raise_key_error=False
+        ),
         default_locale="uk",
     )
     await i18n_middleware.core.startup()
