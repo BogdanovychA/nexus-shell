@@ -74,6 +74,7 @@ async def save_ai_settings(
     message: Message,
     state: FSMContext,
     storage_manager: storage.abstract.StorageManager,
+    i18n: I18nContext,
     model: AIModels,
     key: str,
 ) -> None:
@@ -88,7 +89,7 @@ async def save_ai_settings(
     data = {model: {key: value}}
     await storage_manager.update_user_fields(message.from_user.id, data)
 
-    await message.answer("Налаштування для {model} збережено".format(model=model))
+    await message.answer(i18n.get("setup-save-success", model=model))
 
 
 def _create_model_buttons():
@@ -314,7 +315,7 @@ async def setup_ai_set_token(
         await state.set_state(None)
         return
 
-    await save_ai_settings(message, state, storage_manager, model, "token")
+    await save_ai_settings(message, state, storage_manager, i18n, model, "token")
 
     await message.answer(i18n.get("setup-enter-prompt"))
     await state.set_state(AISetup.waiting_for_prompt)
@@ -334,7 +335,7 @@ async def setup_ai_set_prompt(
         await state.set_state(None)
         return
 
-    await save_ai_settings(message, state, storage_manager, model, "prompt")
+    await save_ai_settings(message, state, storage_manager, i18n, model, "prompt")
 
     await message.answer(i18n.get("setup-ready", model=model))
     await state.set_state(Work.ready)

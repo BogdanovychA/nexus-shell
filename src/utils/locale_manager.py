@@ -8,7 +8,7 @@ from aiogram_i18n.managers import BaseManager
 from config import bot
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Optional
 
     from aiogram.fsm.context import FSMContext
     from aiogram.types import User
