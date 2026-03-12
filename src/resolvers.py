@@ -11,6 +11,7 @@ from aiogram.types import FSInputFile
 
 from config import bot
 from utils import constants, encryption  # , utils
+from utils.locale_manager import LANGUAGES
 
 # from models import FileType
 # from config import telegram
@@ -121,11 +122,24 @@ async def start_command(
     state: FSMContext,
     storage_manager: storage.abstract.StorageManager,
     i18n: I18nContext,
+    locale_manager,  # Виключно, щоб зчитати локаль з БД
+    event_from_user,  # Виключно, щоб зчитати локаль з БД
 ):
 
-    await save_user(message, storage_manager)
-    # await state.set_state(None)
+    # Видаляємо весь кеш
     await state.clear()
+
+    # Записуємо/оновлюємо інфу про користувача в БД, зокрема його локаль
+    await save_user(message, storage_manager)
+
+    # Читаємо локаль з БД після скидання кешу вище ( state.clear() )
+    locale = await locale_manager.get_locale_from_database(
+        event_from_user, storage_manager
+    )
+
+    # Встановлюємо локаль, яка була зчитана з БД
+    await i18n.set_locale(locale, cache_only=True)
+
     await state.update_data(model=AIModels.NONE)
 
     if LOGO_PATH.exists():
@@ -215,7 +229,46 @@ async def setup_ai_start(
     await message.answer(i18n.get("model-select"), reply_markup=_create_model_buttons())
 
 
+@router.message(Command("locale"))
+async def locale_command(
+    message: Message,
+    i18n: I18nContext,
+):
+
+    def _create_locale_buttons():
+        builder = InlineKeyboardBuilder()
+
+        for lang in LANGUAGES:
+
+            builder.add(
+                InlineKeyboardButton(text=lang.upper(), callback_data=f"locale:{lang}")
+            )
+
+        builder.adjust(1)  # По одній в рядок
+
+        return builder.as_markup()
+
+    await message.answer(
+        i18n.get("locale-select"), reply_markup=_create_locale_buttons()
+    )
+
+
 # ** Обробники інлайн-кнопок **
+@router.callback_query(F.data.startswith("locale:"))
+async def set_locale(
+    callback: CallbackQuery,
+    i18n: I18nContext,
+):
+
+    await callback.answer()  # Прибираємо "годинник" завантаження на кнопці
+
+    locale = callback.data.split(":")[1]
+
+    await i18n.set_locale(locale)
+
+    await callback.message.edit_text(i18n.get("locale-is-set", locale=locale.upper()))
+
+
 @router.callback_query(F.data.startswith("set_model:"))
 async def set_model(
     callback: CallbackQuery,

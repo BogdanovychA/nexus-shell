@@ -24,6 +24,7 @@ from redis.asyncio import Redis
 import storage.abstract
 from config import bot, redis, telegram
 from resolvers import router
+from utils import locale_manager
 
 
 async def set_main_menu(the_bot: Bot, i18n_core: BaseCore):
@@ -36,10 +37,9 @@ async def set_main_menu(the_bot: Bot, i18n_core: BaseCore):
         return key
 
     # Список підтримуваних мов
-    locales = [
-        "uk",
-    ]  # "en"
-    default_locale = "uk"
+    locales = locale_manager.LANGUAGES
+
+    default_locale = bot.settings.default_locale
 
     default_translator = i18n_core.get_translator(locale=default_locale)
 
@@ -56,6 +56,10 @@ async def set_main_menu(the_bot: Bot, i18n_core: BaseCore):
             BotCommand(
                 command="/model",
                 description=_translate(default_translator, "command-model-desc"),
+            ),
+            BotCommand(
+                command="/locale",
+                description=_translate(default_translator, "command-locale-desc"),
             ),
             BotCommand(
                 command="/status",
@@ -86,6 +90,10 @@ async def set_main_menu(the_bot: Bot, i18n_core: BaseCore):
                 BotCommand(
                     command="/model",
                     description=_translate(translator, "command-model-desc"),
+                ),
+                BotCommand(
+                    command="/locale",
+                    description=_translate(translator, "command-locale-desc"),
                 ),
                 BotCommand(
                     command="/status",
@@ -126,13 +134,21 @@ async def main():
 
     global_storage = storage.abstract.FirebaseStorage()
 
-    dp = Dispatcher(storage=local_storage, storage_manager=global_storage)
+    lang_manager = locale_manager.LocaleManager()
+
+    dp = Dispatcher(
+        storage=local_storage,
+        storage_manager=global_storage,
+        locale_manager=lang_manager,
+    )
 
     i18n_middleware = I18nMiddleware(
         core=FluentRuntimeCore(
-            path=bot.settings.base_dir / "locales" / "{locale}", raise_key_error=False
+            path=bot.settings.base_dir / "locales" / "{locale}",
+            raise_key_error=False,  # Повертати ключ, якщо нема перекладу
         ),
-        default_locale="uk",
+        # default_locale=bot.settings.default_locale,
+        manager=lang_manager,
     )
     await i18n_middleware.core.startup()
     await set_main_menu(telegram_bot, i18n_middleware.core)
