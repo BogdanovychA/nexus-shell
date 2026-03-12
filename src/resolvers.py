@@ -60,7 +60,7 @@ async def get_model(
     model = await state.get_value("model", default=AIModels.NONE)
 
     if model == AIModels.NONE:
-        await message.answer("Робоча модель не визначена.\nОбери: /model")
+        await message.answer(i18n.get("model-not-defined", model=model))
         return None
 
     if model not in AIModels:
