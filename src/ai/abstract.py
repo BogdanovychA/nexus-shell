@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiogram_i18n import I18nContext
-    from models import AIModels
 
 import logging
 from abc import ABC, abstractmethod
@@ -16,6 +15,7 @@ import openai
 from google import genai
 from google.genai import errors, types
 
+from models import AIModels
 from utils import constants
 
 logger = logging.getLogger(__name__)
