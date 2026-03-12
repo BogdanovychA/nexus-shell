@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from aiogram_i18n import I18nContext
+    from models import AIModels
+
 import logging
 from abc import ABC, abstractmethod
 
@@ -24,21 +32,25 @@ class AIModel(ABC):
         return token if token else None
 
     @abstractmethod
-    async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
+    async def query(
+        self, i18n: I18nContext, token: str, global_prompt: str, local_prompt: str
+    ) -> str:
         pass
 
 
 class Claude(AIModel):
 
-    NAME = "Claude"
+    NAME = AIModels.CLAUDE
     TOKEN_URL = constants.CLAUDE_URL
 
-    async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
+    async def query(
+        self, i18n: I18nContext, token: str, global_prompt: str, local_prompt: str
+    ) -> str:
 
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return i18n.get("error-no-token", name=self.NAME)
 
         try:
             client = anthropic.AsyncAnthropic(api_key=token)
@@ -55,21 +67,19 @@ class Claude(AIModel):
             return response.content[0].text.strip()
 
         except UnicodeEncodeError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} містить заборонені символи.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = i18n.get(
+                "error-forbidden-chars", name=self.NAME, token_url=self.TOKEN_URL
             )
             logger.warning("UnicodeEncodeError in %s: %s", self.NAME, e)
 
         except anthropic.AuthenticationError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = i18n.get(
+                "error-invalid-token", name=self.NAME, token_url=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f'{i18n.get("info-forward-text")}\n\n{i18n.get("error-unexpected", name=self.NAME, error=str(e))}'
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text
@@ -77,15 +87,17 @@ class Claude(AIModel):
 
 class ChatGPT(AIModel):
 
-    NAME = "ChatGPT"
+    NAME = AIModels.GPT
     TOKEN_URL = constants.CHATGPT_URL
 
-    async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
+    async def query(
+        self, i18n: I18nContext, token: str, global_prompt: str, local_prompt: str
+    ) -> str:
 
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return i18n.get("error-no-token", name=self.NAME)
 
         try:
             client = openai.AsyncOpenAI(api_key=token)
@@ -108,14 +120,13 @@ class ChatGPT(AIModel):
             text = response.choices[0].message.content.strip()
 
         except openai.AuthenticationError as e:
-            text = (
-                f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                + f"Отримати можна тут: {self.TOKEN_URL}"
+            text = i18n.get(
+                "error-invalid-token", name=self.NAME, token_url=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f'{i18n.get("info-forward-text")}\n\n{i18n.get("error-unexpected", name=self.NAME, error=str(e))}'
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text
@@ -123,15 +134,17 @@ class ChatGPT(AIModel):
 
 class Gemini(AIModel):
 
-    NAME = "Gemini"
+    NAME = AIModels.GEMINI
     TOKEN_URL = constants.GEMINI_URL
 
-    async def query(self, token: str, global_prompt: str, local_prompt: str) -> str:
+    async def query(
+        self, i18n: I18nContext, token: str, global_prompt: str, local_prompt: str
+    ) -> str:
 
         text = ""
 
         if not (token := self.clean_token(token)):
-            return f"API-ключ (токен) {self.NAME} відсутній у налаштуваннях.\nНалаштуй: /setup"
+            return i18n.get("error-no-token", name=self.NAME)
 
         try:
             client = genai.Client(api_key=token)
@@ -151,34 +164,34 @@ class Gemini(AIModel):
         except errors.ClientError as e:
             error_msg = str(e)
 
-            if "API_KEY_INVALID".lower() in error_msg.lower() or "400" in error_msg:
-                text = (
-                    f"API-ключ (токен) {self.NAME} недійсний або термін його дії закінчився.\nНалаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+            if "API_KEY_INVALID".lower() in error_msg.lower():
+                text = i18n.get(
+                    "error-invalid-token", name=self.NAME, token_url=self.TOKEN_URL
                 )
-            elif (
-                "RESOURCE_EXHAUSTED".lower() in error_msg.lower() or "429" in error_msg
-            ):
-                text = (
-                    f"Ти вичерпав ліміт за цим API-ключем (токеном).\nСпробуй пізніше або налаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+            elif "RESOURCE_EXHAUSTED".lower() in error_msg.lower():
+                text = i18n.get(
+                    "error-limit-exhausted", name=self.NAME, token_url=self.TOKEN_URL
                 )
-            elif "API_KEY_INVALID".lower() in error_msg.lower() or "403" in error_msg:
-                text = (
-                    f"Доступ за цим API-ключем (токеном) заборонений.\nНалаштуй інший: /setup\n\n"
-                    + f"Отримати можна тут: {self.TOKEN_URL}"
+            elif "API_KEY_INVALID".lower() in error_msg.lower():
+                text = i18n.get(
+                    "error-access-denied", name=self.NAME, token_url=self.TOKEN_URL
                 )
             else:
-                text = f"{constants.FORWARD_TEXT}\nПомилка клієнта {self.NAME} (API)"
+                text = i18n.get("error-client-api", name=self.NAME)
 
             logger.warning("ClientError in %s: %s", self.NAME, error_msg)
 
         except ValueError as e:
-            text = f"Некоректний формат токена.\n\n{str(e)}"
+            text = i18n.get(
+                "error-token-format",
+                name=self.NAME,
+                token_url=self.TOKEN_URL,
+                error=str(e),
+            )
             logger.warning("ValueError (invalid token format) in %s: %s", self.NAME, e)
 
         except Exception as e:
-            text = f"{constants.FORWARD_TEXT}\nНеочікувана помилка при зверненні до {self.NAME}:\n\n{str(e)}"
+            text = f'{i18n.get("info-forward-text")}\n\n{i18n.get("error-unexpected", name=self.NAME, error=str(e))}'
             logger.exception("Unexpected error in %s", self.NAME)
 
         return text

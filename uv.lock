@@ -29,6 +29,19 @@ wheels = [
 ]
 
 [[package]]
+name = "aiogram-i18n"
+version = "1.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiogram" },
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0c/db/f488713e1f6707ea7eacafed1909834a691c8d7a149b65b1a3936adf386d/aiogram_i18n-1.5.tar.gz", hash = "sha256:15f7d8064aba842fe6b8529c8962063415b2ca86b6c603d24cba41788dc35062", size = 19665, upload-time = "2026-03-07T23:36:17.483Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d4/09/a5ffedd5fca4e623a3e59ca39e88efe3671415eaaf9189b932d7b43b92d4/aiogram_i18n-1.5-py3-none-any.whl", hash = "sha256:6ce55978d32c8d1008d59f029c300506c6de48a18c8c346de3f666bd78013779", size = 33851, upload-time = "2026-03-07T23:36:16.374Z" },
+]
+
+[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -147,6 +160,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6b/5c/685e6633917e101e5dcb62b9dd76946cbb57c26e133bae9e0cd36033c0a9/attrs-25.4.0.tar.gz", hash = "sha256:16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11", size = 934251, upload-time = "2025-10-06T13:54:44.725Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3a/2a/7cc015f5b9f5db42b7d48157e23356022889fc354a2813c15934b7cb5c0e/attrs-25.4.0-py3-none-any.whl", hash = "sha256:adcf7e2a1fb3b36ac48d97835bb6d8ade15b8dcce26aba8bf1d14847b57a3373", size = 67615, upload-time = "2025-10-06T13:54:43.17Z" },
+]
+
+[[package]]
+name = "babel"
+version = "2.18.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/b2/51899539b6ceeeb420d40ed3cd4b7a40519404f9baf3d4ac99dc413a834b/babel-2.18.0.tar.gz", hash = "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d", size = 9959554, upload-time = "2026-02-01T12:30:56.078Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl", hash = "sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35", size = 10196845, upload-time = "2026-02-01T12:30:53.445Z" },
 ]
 
 [[package]]
@@ -385,6 +407,34 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f0/b8/39f0278fbdbc962551a164e93e10cbba1a195231c93c08440f5f38deec16/firebase_admin-7.2.0.tar.gz", hash = "sha256:0c877c1316d7a213e1c91ae9be20b7b9e11c5889ae546a004e3ee4f119d940bb", size = 196213, upload-time = "2026-02-25T17:30:49.327Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/82/6d1143f019dce79a884d1027b01dd9b122c4d862c197c3753999d298863d/firebase_admin-7.2.0-py3-none-any.whl", hash = "sha256:760b2138e49b4abeb3f0ea409e7ab5fbdaeca315b20750d968689d4bdd1d1b4e", size = 138000, upload-time = "2026-02-25T17:30:47.793Z" },
+]
+
+[[package]]
+name = "fluent-runtime"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "babel" },
+    { name = "fluent-syntax" },
+    { name = "pytz" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/dc/54/94bbd857443565a5776027165fe1e2634d836681d7d9c8992a2fd0ce8302/fluent.runtime-0.4.0.tar.gz", hash = "sha256:cb5ef96a58a3f67acaaca046d1201d202a1ebf2823e5e664370f359bae20574d", size = 17591, upload-time = "2023-03-16T11:10:35.165Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/89/a19b0bdfc74977b44aca2ad2e0600fd89c778184fcbb7fc44ba1002cc7b5/fluent.runtime-0.4.0-py2.py3-none-any.whl", hash = "sha256:51fd02582c2363e1106d7051642967a1b7f406dd9c317bd4600a73ede40c5146", size = 15627, upload-time = "2023-03-16T11:10:33.43Z" },
+]
+
+[[package]]
+name = "fluent-syntax"
+version = "0.19.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/51/52/de75f2faf499ed5a089acff2ab8bda5fc3b8db8a3f1615428ef9ccbf1917/fluent.syntax-0.19.0.tar.gz", hash = "sha256:920326d7f46864b9758f0044e9968e3112198bc826acee16ddd8f11d359004fd", size = 15039, upload-time = "2023-03-16T11:03:24.023Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/54/28/475734afb670bf7932caa1828183a4687cac51111950b9fb633c4f976afc/fluent.syntax-0.19.0-py2.py3-none-any.whl", hash = "sha256:b352b3475fac6c6ed5f06527921f432aac073d764445508ee5218aeccc7cc5c4", size = 16432, upload-time = "2023-03-16T11:03:21.934Z" },
 ]
 
 [[package]]
@@ -836,9 +886,11 @@ version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiogram" },
+    { name = "aiogram-i18n" },
     { name = "anthropic" },
     { name = "cryptography" },
     { name = "firebase-admin" },
+    { name = "fluent-runtime" },
     { name = "google-genai" },
     { name = "openai" },
     { name = "pydantic-settings" },
@@ -856,9 +908,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiogram", specifier = "==3.26.0" },
+    { name = "aiogram-i18n", specifier = "==1.5" },
     { name = "anthropic", specifier = "==0.84.0" },
     { name = "cryptography", specifier = "==46.0.5" },
     { name = "firebase-admin", specifier = "==7.2.0" },
+    { name = "fluent-runtime", specifier = "==0.4.0" },
     { name = "google-genai", specifier = "==1.66.0" },
     { name = "openai", specifier = "==2.26.0" },
     { name = "pydantic-settings", specifier = "==2.13.1" },
@@ -868,9 +922,9 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "black", specifier = ">=26.3.0" },
-    { name = "isort", specifier = ">=8.0.1" },
-    { name = "pre-commit", specifier = ">=4.5.1" },
+    { name = "black", specifier = "==26.3.0" },
+    { name = "isort", specifier = "==8.0.1" },
+    { name = "pre-commit", specifier = "==4.5.1" },
 ]
 
 [[package]]
@@ -1182,6 +1236,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/52/a0/07907b6ff512674d9b201859f7d212298c44933633c946703a20c25e9d81/pytokens-0.4.1-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:967cf6e3fd4adf7de8fc73cd3043754ae79c36475c1c11d514fc72cf5490094a", size = 306698, upload-time = "2026-01-30T01:03:29.653Z" },
     { url = "https://files.pythonhosted.org/packages/39/2a/cbbf9250020a4a8dd53ba83a46c097b69e5eb49dd14e708f496f548c6612/pytokens-0.4.1-cp314-cp314t-win_amd64.whl", hash = "sha256:584c80c24b078eec1e227079d56dc22ff755e0ba8654d8383b2c549107528918", size = 116287, upload-time = "2026-01-30T01:03:30.912Z" },
     { url = "https://files.pythonhosted.org/packages/c6/78/397db326746f0a342855b81216ae1f0a32965deccfd7c830a2dbc66d2483/pytokens-0.4.1-py3-none-any.whl", hash = "sha256:26cef14744a8385f35d0e095dc8b3a7583f6c953c2e3d269c7f82484bf5ad2de", size = 13729, upload-time = "2026-01-30T01:03:45.029Z" },
+]
+
+[[package]]
+name = "pytz"
+version = "2026.1.post1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/56/db/b8721d71d945e6a8ac63c0fc900b2067181dbb50805958d4d4661cf7d277/pytz-2026.1.post1.tar.gz", hash = "sha256:3378dde6a0c3d26719182142c56e60c7f9af7e968076f31aae569d72a0358ee1", size = 321088, upload-time = "2026-03-03T07:47:50.683Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/10/99/781fe0c827be2742bcc775efefccb3b048a3a9c6ce9aec0cbf4a101677e5/pytz-2026.1.post1-py2.py3-none-any.whl", hash = "sha256:f2fd16142fda348286a75e1a524be810bb05d444e5a081f37f7affc635035f7a", size = 510489, upload-time = "2026-03-03T07:47:49.167Z" },
 ]
 
 [[package]]
