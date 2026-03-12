@@ -336,7 +336,7 @@ async def query(
     answer_message = await message.answer(i18n.get("query-waiting", model=model))
 
     text = await client.query(
-        token=token, global_prompt=prompt, local_prompt=message.text
+        i18n, token=token, global_prompt=prompt, local_prompt=message.text
     )
 
     # Обмеження Телеграму щодо довжини
