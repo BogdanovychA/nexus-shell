@@ -13,6 +13,7 @@ Telegram-бот для взаємодії з провідними мовними
 - API-ключі зберігаються у **зашифрованому вигляді** (AES-128, Fernet)
 - Автоматична відправка довгих відповідей як файл (обхід обмежень Telegram)
 - FSM-логіка для покрокового налаштування бота
+- Підтримка **кількох мов** інтерфейсу (🇺🇦 Українська, 🇬🇧 English)
 
 ---
 
@@ -30,6 +31,7 @@ API-ключі користувачів шифруються перед збер
 | `/start` | Запустити бота |
 | `/setup` | Покрокове налаштування моделі, ключа та промпту |
 | `/model` | Змінити мовну модель |
+| `/locale` | Змінити мову інтерфейсу |
 | `/status` | Перевірити поточні налаштування |
 | `/help` | Допомога з отриманням API-ключів |
 
@@ -39,9 +41,11 @@ API-ключі користувачів шифруються перед збер
 
 - **Python 3.14+**
 - [aiogram 3](https://docs.aiogram.dev/) — Telegram Bot framework
+- [aiogram-i18n](https://github.com/aiogram/i18n) — багатомовність (Fluent)
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — збереження користувачів
 - [Redis](https://redis.io/) — FSM-стан
 - [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти
+- [cryptography](https://cryptography.io/) — шифрування API-ключів
 - [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) — конфігурація через `.env`
 - [uv](https://github.com/astral-sh/uv) — менеджер залежностей
 
@@ -63,14 +67,26 @@ mv .env.example .env
 nano .env
 ```
 
-### 3. Додати Firebase credentials
+### 3. Згенерувати ключ шифрування (один раз)
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Додати результат у `.env`:
+
+```env
+CRYPTOGRAPHY__SECRET_KEY=your_generated_key
+```
+
+### 4. Додати Firebase credentials
 
 Розмісти файл `firebase-admin_sdk.json` у директорії:
 ```
 src/secret/firebase-admin_sdk.json
 ```
 
-### 4. Встановити залежності та запустити
+### 5. Встановити залежності та запустити
 
 ```bash
 uv run python src/main.py
