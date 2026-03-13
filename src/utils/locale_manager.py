@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     import storage.abstract
 
 
-LANGUAGES = ["uk", "en"]
+LANGUAGES = ["uk", "en", "pl"]
 
 
 class LocaleManager(BaseManager):
