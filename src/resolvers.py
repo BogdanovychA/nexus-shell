@@ -37,7 +37,7 @@ import ai.abstract
 from models import AIModels, AISetup, User, Work
 
 # DOWNLOAD_PATH = bot.settings.base_dir / "downloads"
-LOGO_PATH = bot.settings.base_dir / "src" / "assets" / "images" / "logo.jpg"
+LOGO_PATH = bot.settings.base_dir / "assets" / "images" / "logo.jpg"
 
 
 logger = logging.getLogger(__name__)
