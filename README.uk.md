@@ -58,7 +58,7 @@ API-ключі користувачів шифруються перед збер
 ### 1. Клонувати репозиторій
 
 ```bash
-git clone https://github.com/your-username/nexus-shell.git
+git clone https://github.com/BogdanovychA/nexus-shell
 cd nexus-shell
 ```
 

@@ -58,7 +58,7 @@ The plaintext key exists only in memory during requests to the AI provider.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/nexus-shell.git
+git clone https://github.com/BogdanovychA/nexus-shell
 cd nexus-shell
 ```
 
