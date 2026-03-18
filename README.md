@@ -1,92 +1,94 @@
 # 🤖 Nexus Shell AI Agent
 
-Telegram-бот для взаємодії з провідними мовними моделями — Gemini, ChatGPT та Claude — через єдиний інтерфейс. Кожен користувач налаштовує власний API-ключ і системний промпт.
+> 🌐 **Translations:** [🇺🇦 Українська](README.uk.md)
+
+A Telegram bot for interacting with leading language models — Gemini, ChatGPT, and Claude — through a single unified interface. Each user configures their own API key and system prompt.
 
 ---
 
-## ✨ Можливості
+## ✨ Features
 
-- Підтримка трьох AI-провайдерів: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
-- Персональні налаштування для кожного користувача (API-ключ + системний промпт)
-- Збереження налаштувань у **Firebase Firestore**
-- Кешування стану у **Redis**
-- API-ключі зберігаються у **зашифрованому вигляді** (AES-128, Fernet)
-- Автоматична відправка довгих відповідей як файл (обхід обмежень Telegram)
-- FSM-логіка для покрокового налаштування бота
-- Підтримка **кількох мов** інтерфейсу (🇺🇦 Українська, 🇬🇧 English, 🇵🇱 Polski)
-
----
-
-## 🔒 Безпека
-
-API-ключі користувачів шифруються перед збереженням у базі даних (AES-128 через Fernet).
-У відкритому вигляді ключ існує лише в пам'яті під час запиту до AI-провайдера.
+- Support for three AI providers: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
+- Per-user personalized settings (API key + system prompt)
+- Settings stored in **Firebase Firestore**
+- State caching in **Redis**
+- API keys stored **encrypted** (AES-128 via Fernet)
+- Automatic sending of long responses as a file (bypasses Telegram message limits)
+- FSM-based step-by-step bot configuration flow
+- **Multi-language** interface support (🇺🇦 Ukrainian, 🇬🇧 English, 🇵🇱 Polish)
 
 ---
 
-## 🛠 Команди
+## 🔒 Security
 
-| Команда | Опис |
+User API keys are encrypted before being saved to the database (AES-128 via Fernet).
+The plaintext key exists only in memory during requests to the AI provider.
+
+---
+
+## 🛠 Commands
+
+| Command | Description |
 |---|---|
-| `/start` | Запустити бота |
-| `/setup` | Покрокове налаштування моделі, ключа та промпту |
-| `/model` | Змінити мовну модель |
-| `/locale` | Змінити мову інтерфейсу |
-| `/status` | Перевірити поточні налаштування |
-| `/help` | Допомога з отриманням API-ключів |
+| `/start` | Start the bot |
+| `/setup` | Step-by-step setup of model, key, and prompt |
+| `/model` | Change the language model |
+| `/locale` | Change the interface language |
+| `/status` | Check current settings |
+| `/help` | Help with obtaining API keys |
 
 ---
 
-## 🏗 Стек
+## 🏗 Stack
 
 - **Python 3.14+**
 - [aiogram 3](https://docs.aiogram.dev/) — Telegram Bot framework
-- [aiogram-i18n](https://github.com/aiogram/i18n) — багатомовність (Fluent)
-- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — збереження користувачів
-- [Redis](https://redis.io/) — FSM-стан
-- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти
-- [cryptography](https://cryptography.io/) — шифрування API-ключів
-- [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) — конфігурація через `.env`
-- [uv](https://github.com/astral-sh/uv) — менеджер залежностей
+- [aiogram-i18n](https://github.com/aiogram/i18n) — i18n support (Fluent)
+- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — user data storage
+- [Redis](https://redis.io/) — FSM state storage
+- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI clients
+- [cryptography](https://cryptography.io/) — API key encryption
+- [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) — configuration via `.env`
+- [uv](https://github.com/astral-sh/uv) — dependency manager
 
 ---
 
-## ⚙️ Налаштування
+## ⚙️ Setup
 
-### 1. Клонувати репозиторій
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-username/nexus-shell.git
 cd nexus-shell
 ```
 
-### 2. Створити `.env` файл
+### 2. Create the `.env` file
 
 ```bash
 mv .env.example .env
 nano .env
 ```
 
-### 3. Згенерувати ключ шифрування (один раз)
+### 3. Generate an encryption key (once)
 
 ```bash
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
-Додати результат у `.env`:
+Add the result to `.env`:
 
 ```env
 CRYPTOGRAPHY__SECRET_KEY=your_generated_key
 ```
 
-### 4. Додати Firebase credentials
+### 4. Add Firebase credentials
 
-Розмісти файл `firebase-admin_sdk.json` у директорії:
+Place the `firebase-admin_sdk.json` file in the following directory:
 ```
 src/secret/firebase-admin_sdk.json
 ```
 
-### 5. Встановити залежності та запустити
+### 5. Install dependencies and run
 
 ```bash
 uv run python src/main.py
@@ -94,7 +96,7 @@ uv run python src/main.py
 
 ---
 
-## 🚀 Деплой як systemd-сервіс
+## 🚀 Deploy as a systemd service
 
 ```ini
 [Unit]
@@ -123,7 +125,7 @@ journalctl -u nexus-shell -f
 
 ---
 
-## 🔑 Отримання API-ключів
+## 🔑 Getting API Keys
 
 - **Gemini** — [Google AI Studio](https://aistudio.google.com/app/api-keys)
 - **ChatGPT** — [OpenAI Platform](https://platform.openai.com/account/api-keys)
@@ -131,7 +133,7 @@ journalctl -u nexus-shell -f
 
 ---
 
-## Лінки
+## Links
 
-* [Бот в Telegram](https://t.me/NexusShellBot)
-* [Підтримати проєкт](https://send.monobank.ua/jar/8Qn1woNnC7)
+* [Bot on Telegram](https://t.me/NexusShellBot)
+* [Support the project](https://send.monobank.ua/jar/8Qn1woNnC7)
