@@ -29,7 +29,9 @@ error-token-format =
     You can get one here: { $token_url }
 
     { $error }
-
+error-model-overloaded =
+    The { $name } servers are currently overloaded due to high demand.
+    Please try again in a few minutes.
 # Unexpected errors
 error-unexpected =
     Unexpected error when accessing { $name }:

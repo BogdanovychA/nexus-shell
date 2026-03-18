@@ -59,6 +59,11 @@ class Gemini(AIModel):
                 text = i18n.get(
                     "error-access-denied", name=self.NAME, token_url=self.TOKEN_URL
                 )
+            elif "503" in error_msg and "UNAVAILABLE".lower() in error_msg.lower():
+                text = i18n.get(
+                    "error-model-overloaded",
+                    name=self.NAME,
+                )
             else:
                 text = i18n.get("error-client-api", name=self.NAME)
 

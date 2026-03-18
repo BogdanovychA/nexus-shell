@@ -29,7 +29,9 @@ error-token-format =
     Możesz go uzyskać tutaj: { $token_url }
 
     { $error }
-
+error-model-overloaded =
+    Serwery { $name } są obecnie przeciążone z powodu dużego natężenia ruchu.
+    Spróbuj ponownie za kilka minut.
 # Unexpected errors
 error-unexpected =
     Nieoczekiwany błąd podczas dostępu do { $name }:
