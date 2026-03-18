@@ -33,7 +33,9 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-import ai.abstract
+from ai.chat_gpt import ChatGPT
+from ai.claude import Claude
+from ai.gemini import Gemini
 from models import AIModels, AISetup, User, Work
 
 # DOWNLOAD_PATH = bot.settings.base_dir / "downloads"
@@ -357,9 +359,9 @@ async def query(
         return
 
     clients = {
-        AIModels.GEMINI: ai.abstract.Gemini,
-        AIModels.GPT: ai.abstract.ChatGPT,
-        AIModels.CLAUDE: ai.abstract.Claude,
+        AIModels.GEMINI: Gemini,
+        AIModels.GPT: ChatGPT,
+        AIModels.CLAUDE: Claude,
     }
 
     client_class = clients.get(model)
