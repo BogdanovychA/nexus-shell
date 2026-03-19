@@ -31,7 +31,7 @@ class ChatGPT(AIModel):
         try:
             client = openai.AsyncOpenAI(api_key=token)
 
-            model = "gpt-4-turbo"  # gpt-4-turbo, gpt-4o, gpt-4-turbo, gpt-3.5-turbo
+            model = "gpt-4o"  # gpt-4o, gpt-4-turbo, gpt-3.5-turbo
 
             message_list = [
                 {"role": "system", "content": global_prompt},
@@ -59,6 +59,22 @@ class ChatGPT(AIModel):
                 "error-invalid-token", name=self.NAME, token_url=self.TOKEN_URL
             )
             logger.warning("AuthenticationError in %s: %s", self.NAME, e)
+
+        except openai.RateLimitError as e:
+            error_msg = str(e)
+
+            if "insufficient_quota" in error_msg.lower():
+                text = i18n.get(
+                    "error-balance-is-low", name=self.NAME, token_url=self.TOKEN_URL
+                )
+            elif "rate_limit_exceeded" in error_msg.lower():
+                text = i18n.get(
+                    "error-limit-exhausted", name=self.NAME, token_url=self.TOKEN_URL
+                )
+            else:
+                text = i18n.get("error-client-api", name=self.NAME)
+
+            logger.warning("ClientError in %s: %s", self.NAME, error_msg)
 
         except Exception as e:
             text = f'{i18n.get("info-forward-text")}\n\n{i18n.get("error-unexpected", name=self.NAME, error=str(e))}'
