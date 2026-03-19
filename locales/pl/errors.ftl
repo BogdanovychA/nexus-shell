@@ -7,6 +7,12 @@ error-invalid-token =
     Skonfiguruj inny: /setup
 
     Możesz go uzyskać tutaj: { $token_url }
+error-balance-is-low =
+    Saldo Twojego klucza API { $name } jest niewystarczające do wykonywania zapytań.
+    Doładuj saldo lub skonfiguruj inny klucz:
+    /setup
+
+    Możesz doładować saldo lub uzyskać inny klucz tutaj: { $token_url }
 error-forbidden-chars =
     Klucz API { $name } zawiera niedozwolone znaki.
     Skonfiguruj inny: /setup

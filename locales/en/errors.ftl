@@ -7,6 +7,12 @@ error-invalid-token =
     Configure another one: /setup
 
     You can get one here: { $token_url }
+error-balance-is-low =
+    Your API key { $name } has insufficient balance to make requests.
+    Top up your balance or configure another key:
+    /setup
+
+    You can top up your balance or get another key here: { $token_url }
 error-forbidden-chars =
     The { $name } API key contains forbidden characters.
     Configure another one: /setup
