@@ -72,7 +72,7 @@ class ChatGPT(AIModel):
                     "error-limit-exhausted", name=self.NAME, token_url=self.TOKEN_URL
                 )
             else:
-                text = i18n.get("error-client-api", name=self.NAME)
+                text = f'{i18n.get("error-client-api", name=self.NAME)} {i18n.get("info-forward-text")}'
 
             logger.warning("ClientError in %s: %s", self.NAME, error_msg)
 
