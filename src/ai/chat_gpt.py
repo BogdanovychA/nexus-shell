@@ -48,6 +48,12 @@ class ChatGPT(AIModel):
 
             text = response.choices[0].message.content.strip()
 
+        except UnicodeEncodeError as e:
+            text = i18n.get(
+                "error-forbidden-chars", name=self.NAME, token_url=self.TOKEN_URL
+            )
+            logger.warning("UnicodeEncodeError in %s: %s", self.NAME, e)
+
         except openai.AuthenticationError as e:
             text = i18n.get(
                 "error-invalid-token", name=self.NAME, token_url=self.TOKEN_URL
