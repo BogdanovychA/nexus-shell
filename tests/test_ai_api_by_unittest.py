@@ -40,7 +40,7 @@ class AIAPITest(unittest.IsolatedAsyncioTestCase):
         cases = [
             ("", "error-no-token"),
             ("   ", "error-no-token"),
-            ("bad-token", "error-invalid-token"),
+            ("bad token", "error-invalid-token"),
             ("кирилиця в токені", "error-invalid-token"),
         ]
 
@@ -52,7 +52,7 @@ class AIAPITest(unittest.IsolatedAsyncioTestCase):
         cases = [
             ("", "error-no-token"),
             ("   ", "error-no-token"),
-            ("bad-token", "error-invalid-token"),
+            ("bad token", "error-invalid-token"),
             ("кирилиця в токені", "error-forbidden-chars"),
         ]
 
@@ -64,7 +64,7 @@ class AIAPITest(unittest.IsolatedAsyncioTestCase):
         cases = [
             ("", "error-no-token"),
             ("   ", "error-no-token"),
-            ("bad-token", "error-invalid-token"),
+            ("bad token", "error-invalid-token"),
             ("кирилиця в токені", "error-forbidden-chars"),
         ]
 
