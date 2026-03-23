@@ -19,7 +19,24 @@ class APITest(unittest.IsolatedAsyncioTestCase):
 
     def tearDown(self):
         self.mock_i18n = None
+
         self.client = None
+
+        logging.disable(logging.NOTSET)
+
+    async def _queries(self, cases):
+
+        for token, error_msg in cases:
+            with self.subTest(model=self.client.NAME, token=token, error_msg=error_msg):
+                self.assertEqual(
+                    await self.client.query(
+                        i18n=self.mock_i18n,
+                        token=token,
+                        global_prompt="test",
+                        local_prompt="test",
+                    ),
+                    error_msg,
+                )
 
     async def test_gemini(self):
 
@@ -31,20 +48,7 @@ class APITest(unittest.IsolatedAsyncioTestCase):
         ]
 
         self.client = Gemini()
-
-        for token, error_msg in cases:
-
-            with self.subTest(token=token, error_msg=error_msg):
-
-                self.assertEqual(
-                    await self.client.query(
-                        i18n=self.mock_i18n,
-                        token=token,
-                        global_prompt="test",
-                        local_prompt="test",
-                    ),
-                    error_msg,
-                )
+        await self._queries(cases)
 
     async def test_chatgpt(self):
 
@@ -56,20 +60,7 @@ class APITest(unittest.IsolatedAsyncioTestCase):
         ]
 
         self.client = ChatGPT()
-
-        for token, error_msg in cases:
-
-            with self.subTest(token=token, error_msg=error_msg):
-
-                self.assertEqual(
-                    await self.client.query(
-                        i18n=self.mock_i18n,
-                        token=token,
-                        global_prompt="test",
-                        local_prompt="test",
-                    ),
-                    error_msg,
-                )
+        await self._queries(cases)
 
     async def test_claude(self):
 
@@ -81,17 +72,4 @@ class APITest(unittest.IsolatedAsyncioTestCase):
         ]
 
         self.client = Claude()
-
-        for token, error_msg in cases:
-
-            with self.subTest(token=token, error_msg=error_msg):
-
-                self.assertEqual(
-                    await self.client.query(
-                        i18n=self.mock_i18n,
-                        token=token,
-                        global_prompt="test",
-                        local_prompt="test",
-                    ),
-                    error_msg,
-                )
+        await self._queries(cases)
