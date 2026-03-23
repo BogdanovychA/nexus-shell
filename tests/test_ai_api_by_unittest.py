@@ -9,19 +9,16 @@ from ai.claude import Claude
 from ai.gemini import Gemini
 
 
-class APITest(unittest.IsolatedAsyncioTestCase):
+class AIAPITest(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self):
         self.mock_i18n = MagicMock()
         self.mock_i18n.get.side_effect = lambda key, **kwargs: key
-
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):
         self.mock_i18n = None
-
         self.client = None
-
         logging.disable(logging.NOTSET)
 
     async def _queries(self, cases):
