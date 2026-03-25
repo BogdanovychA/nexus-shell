@@ -201,7 +201,7 @@ async def check_status(
     if user_id is None:
         user_id = message.from_user.id
 
-    model_data = await storage_manager.load_user_fields(user_id, {model})
+    model_data = await storage_manager.load_ai_settings(user_id, model)
 
     if not model_data:
         await message.answer(i18n.get("model-not-configured", model=model))
@@ -381,9 +381,7 @@ async def query(
         await message.answer(i18n.get("query-cache-missing"))
         await message.answer(i18n.get("query-loading-db"))
 
-        model_data = await storage_manager.load_user_fields(
-            message.from_user.id, {model}
-        )
+        model_data = await storage_manager.load_ai_settings(message.from_user.id, model)
 
         encrypted_token = model_data[model]["token"]
         token = encryption.decrypt(encrypted_token)

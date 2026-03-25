@@ -52,7 +52,7 @@ class LocaleManager(BaseManager):
         storage_manager: storage.abstract.StorageManager,
     ) -> str:
 
-        data = await storage_manager.load_user_fields(event_from_user.id, {self.KEY})
+        data = await storage_manager.load_user_data(event_from_user.id, {self.KEY})
 
         if data:
             locale = data[self.KEY] if self.KEY in data else ""

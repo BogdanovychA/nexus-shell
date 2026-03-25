@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from typing import Any
+
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -63,3 +66,54 @@ class SQLAlchemyManager:
                     )
 
                     await session.execute(upsert_stmt)
+
+    async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
+        """
+        Завантажує налаштування ШІ для конкретного користувача та моделі.
+        """
+        async with self.session_factory() as session:
+
+            stmt = select(AISettingORM).where(
+                AISettingORM.user_id == user_id, AISettingORM.model_name == model
+            )
+
+            result = await session.execute(stmt)
+
+            settings_obj = result.scalar_one_or_none()
+
+            if not settings_obj:
+                return None
+
+            return {model: {"token": settings_obj.token, "prompt": settings_obj.prompt}}
+
+    async def load_user_data(
+        self, user_id: int, fields: set[str] | None = None
+    ) -> dict[str, Any] | None:
+        """
+        Завантаження даних користувача з таблиці users.
+        """
+        async with self.session_factory() as session:
+
+            if fields:
+                columns = [getattr(UserORM, f) for f in fields if hasattr(UserORM, f)]
+                if not columns:
+                    columns = [UserORM]
+            else:
+                columns = [UserORM]
+
+            stmt = select(*columns).where(UserORM.id == user_id)
+            result = await session.execute(stmt)
+
+            if fields:
+                row = result.mappings().one_or_none()
+                if row:
+                    return dict(row)
+            else:
+                user_obj = result.scalar_one_or_none()
+                if user_obj:
+                    return {
+                        column.name: getattr(user_obj, column.name)
+                        for column in UserORM.__table__.columns
+                    }
+
+            return None

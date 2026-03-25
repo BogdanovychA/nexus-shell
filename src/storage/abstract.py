@@ -39,7 +39,12 @@ class StorageManager(ABC):
         pass
 
     @abstractmethod
-    async def load_user_fields(
+    async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
+        """Завантаження Налаштувань ШІ"""
+        pass
+
+    @abstractmethod
+    async def load_user_data(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
         """Завантаження даних користувача"""
@@ -65,10 +70,13 @@ class PostgresStorage(StorageManager):
     async def update_ai_settings(self, user_id: int, fields: dict) -> None:
         await self.storage.update_ai_settings(user_id, fields)
 
-    async def load_user_fields(
+    async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
+        return await self.storage.load_ai_settings(user_id, model)
+
+    async def load_user_data(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
-        pass
+        return await self.storage.load_user_data(user_id, fields)
 
     async def close(self):
         await self.engine.dispose()
@@ -88,7 +96,10 @@ class FirebaseStorage(StorageManager):
     async def update_ai_settings(self, user_id: int, fields: dict) -> None:
         await asyncio.to_thread(firebase.update_user_fields, user_id, fields)
 
-    async def load_user_fields(
+    async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
+        return await asyncio.to_thread(firebase.load_user_fields, user_id, {model})
+
+    async def load_user_data(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
         return await asyncio.to_thread(firebase.load_user_fields, user_id, fields)
