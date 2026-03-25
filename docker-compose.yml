@@ -1,0 +1,23 @@
+name: nexus-shell
+
+services:
+  db-postgres:
+    image: postgres:16-alpine
+    container_name: nexus-shell_postgres
+    env_file:
+      - .env
+    volumes:
+      - ./docker_data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: nexus-shell_pgadmin
+    env_file:
+      - .env
+    volumes:
+      - ./docker_data/pgadmin:/var/lib/pgadmin
+    ports:
+      - "8033:80"
+    depends_on:
+      - db-postgres

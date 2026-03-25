@@ -22,6 +22,7 @@ htmlcov/
 .coverage
 
 # Project
+docker_data/*
 src/secret/*
 !src/secret/.gitkeep
 downloads/*
