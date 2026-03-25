@@ -15,7 +15,8 @@ dependencies = [
     "openai==2.29.0",
     "pydantic-settings==2.13.1",
     "pydantic==2.12.5",
-    "redis==7.3.0",
+    "redis==7.4.0",
+    "sqlalchemy==2.0.48",
 ]
 
 [dependency-groups]
