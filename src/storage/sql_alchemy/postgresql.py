@@ -10,7 +10,7 @@ from src.models import User
 from src.storage.sql_alchemy.models import AISettingORM, UserORM
 
 
-class SQLAlchemyManager:
+class PostgresManager:
     def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
         self.session_factory = session_factory
 

@@ -42,3 +42,21 @@ class AISettingORM(Base):
     __table_args__ = (
         UniqueConstraint('user_id', 'model_name', name='idx_user_model_unique'),
     )
+
+
+if __name__ == "__main__":
+
+    import asyncio
+
+    from sqlalchemy.ext.asyncio import create_async_engine
+
+    from src.config.postgres import settings
+
+    async def init_models():
+
+        engine = create_async_engine(settings.url, echo=True)
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        await engine.dispose()
+
+    asyncio.run(init_models())

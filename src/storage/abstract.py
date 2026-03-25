@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from src.config import postgres
-from src.storage.sql_alchemy.manager import SQLAlchemyManager
+from src.storage.sql_alchemy.postgresql import PostgresManager
 from storage import firebase
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class PostgresStorage(StorageManager):
     def __init__(self):
         self.engine = create_async_engine(postgres.settings.url, echo=True)
         self.async_session = async_sessionmaker(self.engine, expire_on_commit=False)
-        self.storage = SQLAlchemyManager(session_factory=self.async_session)
+        self.storage = PostgresManager(session_factory=self.async_session)
 
     async def save_user(self, user: User):
         await self.storage.save_user(user)
