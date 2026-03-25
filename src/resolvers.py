@@ -89,7 +89,7 @@ async def save_ai_settings(
         value = encryption.encrypt(value)  # шифруємо перед записом у БД
 
     data = {model: {key: value}}
-    await storage_manager.update_user_fields(message.from_user.id, data)
+    await storage_manager.update_ai_settings(message.from_user.id, data)
 
     await message.answer(i18n.get("setup-save-success", model=model))
 

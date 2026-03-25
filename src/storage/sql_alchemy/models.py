@@ -2,7 +2,7 @@
 
 from typing import List, Optional
 
-from sqlalchemy import BigInteger, Boolean, ForeignKey, String, Text
+from sqlalchemy import BigInteger, Boolean, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -38,3 +38,7 @@ class AISettingORM(Base):
     token: Mapped[Optional[str]] = mapped_column(Text)
 
     user: Mapped["UserORM"] = relationship(back_populates="ai_settings")
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'model_name', name='idx_user_model_unique'),
+    )

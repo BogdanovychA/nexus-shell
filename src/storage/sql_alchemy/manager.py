@@ -18,12 +18,14 @@ class SQLAlchemyManager:
         async with self.session_factory() as session:
             async with session.begin():
 
-                user_data = user.model_dump()
+                user_data = user.model_dump(exclude_none=True)
 
                 stmt = insert(UserORM).values(**user_data)
 
                 update_cols = {
-                    col.name: col for col in stmt.excluded if col.name != 'id'
+                    key: getattr(stmt.excluded, key)
+                    for key in user_data.keys()
+                    if key != 'id'
                 }
 
                 upsert_stmt = stmt.on_conflict_do_update(
@@ -31,3 +33,33 @@ class SQLAlchemyManager:
                 )
 
                 await session.execute(upsert_stmt)
+
+    async def update_user_data(self, user_id: int, fields: dict) -> None:
+        user = User(id=user_id, **fields)
+        await self.save_user(user)
+
+    async def update_ai_settings(self, user_id: int, fields: dict) -> None:
+        """
+        Оновлює або створює налаштування AI для конкретного користувача(UPSERT).
+        """
+        async with self.session_factory() as session:
+            async with session.begin():
+                for model_name, values in fields.items():
+
+                    insert_data = {
+                        "user_id": user_id,
+                        "model_name": model_name,
+                        **values,
+                    }
+
+                    stmt = insert(AISettingORM).values(**insert_data)
+
+                    update_dict = {
+                        k: v for k, v in values.items() if k in ["token", "prompt"]
+                    }
+
+                    upsert_stmt = stmt.on_conflict_do_update(
+                        index_elements=['user_id', 'model_name'], set_=update_dict
+                    )
+
+                    await session.execute(upsert_stmt)

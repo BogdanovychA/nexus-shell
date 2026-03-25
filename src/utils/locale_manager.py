@@ -44,7 +44,7 @@ class LocaleManager(BaseManager):
             return
 
         # Запис локалі в БД
-        await storage_manager.update_user_fields(event_from_user.id, data)
+        await storage_manager.update_user_data(event_from_user.id, data)
 
     async def get_locale_from_database(
         self,
