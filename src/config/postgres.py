@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from config import bot
 
 
-class EncryptionConfig(BaseSettings):
+class PostgresConfig(BaseSettings):
     server: str | None = None
     port: int | None = None
     user: str | None = None
@@ -18,5 +18,9 @@ class EncryptionConfig(BaseSettings):
         extra="ignore",
     )
 
+    @property
+    def url(self) -> str:
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
 
-settings = EncryptionConfig()
+
+settings = PostgresConfig()
