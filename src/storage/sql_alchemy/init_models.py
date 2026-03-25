@@ -5,7 +5,7 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from src.config.postgres import settings
-from src.storage.orm.models import Base
+from src.storage.sql_alchemy.models import Base
 
 
 async def init_models():

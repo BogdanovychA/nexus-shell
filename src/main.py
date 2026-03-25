@@ -136,7 +136,8 @@ async def main():
         key_builder=DefaultKeyBuilder(**redis.settings.key_builder.model_dump()),
     )
 
-    global_storage = storage.abstract.FirebaseStorage()
+    # global_storage = storage.abstract.FirebaseStorage()
+    global_storage = storage.abstract.PostgresStorage()
 
     lang_manager = locale_manager.LocaleManager()
 
