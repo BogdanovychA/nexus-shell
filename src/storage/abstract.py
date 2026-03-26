@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from src.config import postgres
-from src.storage.sql_alchemy.postgresql import PostgresManager
+from config import postgres
 from storage import firebase
+from storage.sql_alchemy.postgresql import PostgresManager
 
 if TYPE_CHECKING:
     from models import User
