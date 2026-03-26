@@ -161,7 +161,10 @@ async def main():
 
     dp.include_router(router)
 
-    await dp.start_polling(telegram_bot)
+    try:
+        await dp.start_polling(telegram_bot)
+    finally:
+        await global_storage.close()
 
 
 if __name__ == "__main__":

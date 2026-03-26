@@ -50,6 +50,11 @@ class StorageManager(ABC):
         """Завантаження даних користувача"""
         pass
 
+    @abstractmethod
+    async def close(self):
+        """Закриття сесії"""
+        pass
+
 
 class PostgresStorage(StorageManager):
 
@@ -103,3 +108,6 @@ class FirebaseStorage(StorageManager):
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
         return await asyncio.to_thread(firebase.load_user_fields, user_id, fields)
+
+    async def close(self):
+        pass  # У Firebase не потрібно закривати сесію
