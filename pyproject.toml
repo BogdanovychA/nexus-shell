@@ -18,6 +18,7 @@ dependencies = [
     "redis==7.4.0",
     "sqlalchemy==2.0.48",
     "asyncpg==0.31.0",
+    "pymongo==4.16.0",
 ]
 
 [dependency-groups]
