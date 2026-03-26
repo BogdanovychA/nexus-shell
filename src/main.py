@@ -23,6 +23,7 @@ from redis.asyncio import Redis
 
 import storage.abstract
 from config import bot, redis, telegram
+from models import GlobalStorage
 from resolvers import router
 from utils import locale_manager
 
@@ -136,8 +137,11 @@ async def main():
         key_builder=DefaultKeyBuilder(**redis.settings.key_builder.model_dump()),
     )
 
-    global_storage = storage.abstract.FirebaseStorage()
-    # global_storage = storage.abstract.PostgresStorage()
+    match bot.settings.global_storage:
+        case GlobalStorage.POSTGRESQL:
+            global_storage = storage.abstract.PostgresStorage()
+        case GlobalStorage.FIREBASE | _:
+            global_storage = storage.abstract.FirebaseStorage()
 
     lang_manager = locale_manager.LocaleManager()
 

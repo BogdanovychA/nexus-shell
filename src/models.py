@@ -45,3 +45,8 @@ class AIModels(StrEnum):
     GEMINI = "Gemini"
     GPT = "ChatGPT"
     CLAUDE = "Claude"
+
+
+class GlobalStorage(StrEnum):
+    FIREBASE = "Firebase"
+    POSTGRESQL = "PostgreSQL"
