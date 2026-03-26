@@ -23,6 +23,7 @@ htmlcov/
 
 # Project
 docker_data/*
+!docker_data/.gitkeep
 src/secret/*
 !src/secret/.gitkeep
 downloads/*
