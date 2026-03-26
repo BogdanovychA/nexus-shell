@@ -61,6 +61,9 @@ class PostgresManager:
                         k: v for k, v in values.items() if k in ["token", "prompt"]
                     }
 
+                    if not update_dict:
+                        raise ValueError("token and prompt are empty")
+
                     upsert_stmt = stmt.on_conflict_do_update(
                         index_elements=['user_id', 'model_name'], set_=update_dict
                     )

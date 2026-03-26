@@ -59,7 +59,7 @@ class StorageManager(ABC):
 class PostgresStorage(StorageManager):
 
     def __init__(self):
-        self.engine = create_async_engine(postgres.settings.url, echo=True)
+        self.engine = create_async_engine(postgres.settings.url)  # , echo=True)
         self.async_session = async_sessionmaker(self.engine, expire_on_commit=False)
         self.storage = PostgresManager(session_factory=self.async_session)
 
@@ -67,7 +67,7 @@ class PostgresStorage(StorageManager):
         await self.storage.save_user(user)
 
     async def load_user(self, user_id: int) -> User | None:
-        pass
+        raise NotImplementedError
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await self.storage.update_user_data(user_id, fields)
