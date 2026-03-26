@@ -29,8 +29,6 @@ services:
     image: redis:7.2-alpine
     container_name: nexus-shell_redis
     restart: always
-    ports:
-      - "${REDIS__PORT}:6379"
     command:
       - redis-server
       - --requirepass
@@ -49,17 +47,19 @@ services:
       - "-select"
     volumes:
       - ./docker_data/redis:/data
+    ports:
+      - "${REDIS__PORT}:6379"
 
   redisinsight:
     image: redis/redisinsight:latest
     container_name: nexus-shell_redisinsight
     restart: always
-    ports:
-      - "5541:5540"
     environment:
       - RI_APP_PORT=5540
     volumes:
       - ./docker_data/redisinsight:/data
+    ports:
+      - "5541:5540"
     depends_on:
       - db-redis
 
