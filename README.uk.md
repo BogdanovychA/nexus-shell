@@ -10,7 +10,7 @@ Telegram-бот для взаємодії з провідними мовними
 
 - Підтримка трьох AI-провайдерів: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
 - Персональні налаштування для кожного користувача (API-ключ + системний промпт)
-- Збереження налаштувань у **Firebase Firestore**
+- Збереження налаштувань у **Firebase Firestore** або **PostgreSQL** (на вибір)
 - Кешування стану у **Redis**
 - API-ключі зберігаються у **зашифрованому вигляді** (AES-128, Fernet)
 - Автоматична відправка довгих відповідей як файл (обхід обмежень Telegram)
@@ -44,7 +44,8 @@ API-ключі користувачів шифруються перед збер
 - **Python 3.14+**
 - [aiogram 3](https://docs.aiogram.dev/) — Telegram Bot framework
 - [aiogram-i18n](https://github.com/aiogram/i18n) — багатомовність (Fluent)
-- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — збереження користувачів
+- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — збереження користувачів *(за замовчуванням)*
+- [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — підтримка PostgreSQL *(альтернатива)*
 - [Redis](https://redis.io/) — FSM-стан
 - [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти
 - [cryptography](https://cryptography.io/) — шифрування API-ключів
@@ -93,6 +94,57 @@ src/secret/firebase-admin_sdk.json
 ```bash
 uv run python src/main.py
 ```
+
+---
+
+## 🗄 Сховище даних
+
+За замовчуванням бот використовує **Firebase Firestore**. Як альтернативу можна підключити **PostgreSQL**.
+
+### Перемикання на PostgreSQL
+
+У файлі `.env` змінити налаштування сховища:
+
+```env
+# За замовчуванням — Firebase
+MAIN__GLOBAL_STORAGE=Firebase
+
+# Альтернатива — PostgreSQL
+MAIN__GLOBAL_STORAGE=PostgreSQL
+```
+
+Заповнити облікові дані PostgreSQL у тому ж `.env`:
+
+```env
+POSTGRES_SERVER=
+POSTGRES_PORT=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+```
+
+Ініціалізувати схему бази даних (створює всі таблиці):
+
+```bash
+uv run python src/storage/sql_alchemy/models.py
+```
+
+### Запуск через Docker Compose
+
+Для зручності в репозиторії є `docker-compose.yml`, який одною командою піднімає PostgreSQL, pgAdmin, Redis та RedisInsight:
+
+```bash
+docker compose up -d
+```
+
+| Сервіс | URL | Опис |
+|---|---|---|
+| PostgreSQL | `localhost:${POSTGRES_PORT}` | Основна база даних |
+| pgAdmin | `http://localhost:8033` | Веб-інтерфейс PostgreSQL |
+| Redis | `localhost:${REDIS__PORT}` | Збереження FSM-стану |
+| RedisInsight | `http://localhost:5541` | Веб-інтерфейс Redis |
+
+> **Примітка:** Firebase credentials потрібні лише при `MAIN__GLOBAL_STORAGE=Firebase` (за замовчуванням). При переході на PostgreSQL файл `firebase-admin_sdk.json` та Firebase Admin SDK не потрібні.
 
 ---
 

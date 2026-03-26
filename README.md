@@ -10,7 +10,7 @@ A Telegram bot for interacting with leading language models — Gemini, ChatGPT,
 
 - Support for three AI providers: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
 - Per-user personalized settings (API key + system prompt)
-- Settings stored in **Firebase Firestore**
+- Settings stored in **Firebase Firestore** or **PostgreSQL** (configurable)
 - State caching in **Redis**
 - API keys stored **encrypted** (AES-128 via Fernet)
 - Automatic sending of long responses as a file (bypasses Telegram message limits)
@@ -44,7 +44,8 @@ The plaintext key exists only in memory during requests to the AI provider.
 - **Python 3.14+**
 - [aiogram 3](https://docs.aiogram.dev/) — Telegram Bot framework
 - [aiogram-i18n](https://github.com/aiogram/i18n) — i18n support (Fluent)
-- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — user data storage
+- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — user data storage *(default)*
+- [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — PostgreSQL support *(alternative)*
 - [Redis](https://redis.io/) — FSM state storage
 - [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI clients
 - [cryptography](https://cryptography.io/) — API key encryption
@@ -93,6 +94,57 @@ src/secret/firebase-admin_sdk.json
 ```bash
 uv run python src/main.py
 ```
+
+---
+
+## 🗄 Storage Backend
+
+By default the bot uses **Firebase Firestore**. As an alternative, you can switch to **PostgreSQL**.
+
+### Switching to PostgreSQL
+
+In your `.env` file, change the storage setting:
+
+```env
+# Default — Firebase
+MAIN__GLOBAL_STORAGE=Firebase
+
+# Alternative — PostgreSQL
+MAIN__GLOBAL_STORAGE=PostgreSQL
+```
+
+Then fill in the PostgreSQL credentials in the same `.env` file:
+
+```env
+POSTGRES_SERVER=
+POSTGRES_PORT=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+```
+
+Initialize the database schema (creates all tables):
+
+```bash
+uv run python src/storage/sql_alchemy/models.py
+```
+
+### Running with Docker Compose
+
+For convenience, a `docker-compose.yml` is included that starts PostgreSQL, pgAdmin, Redis, and RedisInsight with a single command:
+
+```bash
+docker compose up -d
+```
+
+| Service | URL | Description |
+|---|---|---|
+| PostgreSQL | `localhost:${POSTGRES_PORT}` | Main database |
+| pgAdmin | `http://localhost:8033` | PostgreSQL web UI |
+| Redis | `localhost:${REDIS__PORT}` | FSM state storage |
+| RedisInsight | `http://localhost:5541` | Redis web UI |
+
+> **Note:** Firebase credentials are still required when `MAIN__GLOBAL_STORAGE=Firebase` (the default). If you switch to PostgreSQL, the `firebase-admin_sdk.json` file and Firebase Admin SDK are not needed.
 
 ---
 
