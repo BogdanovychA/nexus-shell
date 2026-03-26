@@ -6,8 +6,8 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.models import User
-from src.storage.sql_alchemy.models import AISettingORM, UserORM
+from models import User
+from storage.sql_alchemy.models import AISettingORM, UserORM
 
 
 class PostgresManager:
