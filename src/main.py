@@ -140,6 +140,8 @@ async def main():
     match bot.settings.global_storage:
         case GlobalStorage.POSTGRESQL:
             global_storage = storage.abstract.PostgresStorage()
+        case GlobalStorage.MONGODB:
+            global_storage = storage.abstract.MongoStorage()
         case GlobalStorage.FIREBASE | _:
             global_storage = storage.abstract.FirebaseStorage()
 

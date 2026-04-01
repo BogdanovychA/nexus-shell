@@ -50,3 +50,4 @@ class AIModels(StrEnum):
 class GlobalStorage(StrEnum):
     FIREBASE = "Firebase"
     POSTGRESQL = "PostgreSQL"
+    MONGODB = "MongoDB"

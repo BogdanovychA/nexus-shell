@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from aiogram.types import Message
 
-from models import FileType
+from models import FileType, User
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -63,3 +63,30 @@ def split_text(text: str, max_length: int = 4096):
     """Розбиває текст на частини по 4096 символів."""
 
     return [text[i : i + max_length] for i in range(0, len(text), max_length)]
+
+
+def load_user(
+    user_id: int, load_user_fields: Callable[[int], dict | None]
+) -> User | None:
+    """Завантаження користувача з БД"""
+
+    data = load_user_fields(user_id)
+
+    if not data:
+        return None
+
+    data["id"] = user_id
+    return User(**data)
+
+
+def flatten_dict(d: dict, parent_key: str | None = None) -> dict:
+    """Перетворює вкладений словник у плоский для MongoDB Dot Notation"""
+
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}.{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key).items())  # Обережно, рекурсія! :)
+        else:
+            items.append((new_key, v))
+    return dict(items)

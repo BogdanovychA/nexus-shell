@@ -6,6 +6,7 @@ from firebase_admin import credentials, firestore
 
 from config import firebase
 from models import User
+from utils import utils
 
 try:
     app = firebase_admin.get_app()  # якщо вже ініціалізовано — отримуємо
@@ -43,14 +44,7 @@ def load_user_fields(user_id: int, fields: set[str] | None = None) -> dict | Non
 
 def load_user(user_id: int) -> User | None:
     """Завантаження користувача з Firebase Firestore"""
-
-    data = load_user_fields(user_id)
-
-    if not data:
-        return None
-
-    data["id"] = user_id
-    return User(**data)
+    return utils.load_user(user_id, load_user_fields)
 
 
 def get_users(limit: int = firebase.settings.limit, last_doc=None) -> list[User]:
