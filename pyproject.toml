@@ -1,17 +1,17 @@
 [project]
 name = "nexus-shell"
-version = "1.1.1"
+version = "1.1.2"
 description = "Nexus Shell AI Agent"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "aiogram==3.26.0",
     "aiogram-i18n==1.5",
-    "anthropic==0.87.0",
+    "anthropic==0.88.0",
     "cryptography==46.0.6",
     "firebase-admin==7.3.0",
     "fluent-runtime==0.4.0",
-    "google-genai==1.69.0",
+    "google-genai==1.70.0",
     "openai==2.30.0",
     "pydantic-settings==2.13.1",
     "pydantic==2.12.5",
