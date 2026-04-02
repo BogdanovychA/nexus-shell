@@ -2,56 +2,57 @@
 
 from pymongo import MongoClient
 
-from config import mongo
 from models import User
 from utils import utils
 
-client = MongoClient(mongo.settings.url)
-db = client[mongo.settings.db]
-users = db[mongo.settings.main_collection]
 
+class MongoManager:
 
-def save_user(user: User) -> None:
-    """Збереження користувача у MongoDB"""
+    def __init__(self, url: str, database: str, collection: str) -> None:
+        self.client = MongoClient(url)
+        self.db = self.client[database]
+        self.users = self.db[collection]
 
-    data = user.model_dump()
-    update_user_fields(user.id, data)
+    def save_user(self, user: User) -> None:
+        """Збереження користувача у MongoDB"""
 
+        data = user.model_dump()
+        self.update_user_fields(user.id, data)
 
-def update_user_fields(user_id: int, fields: dict) -> None:
-    """Оновлення даних користувача у MongoDB"""
+    def update_user_fields(self, user_id: int, fields: dict) -> None:
+        """Оновлення даних користувача у MongoDB"""
 
-    fields = utils.flatten_dict(fields)
+        fields = utils.flatten_dict(fields)
 
-    fields.pop("_id", None)
-    fields.pop("id", None)
+        fields.pop("_id", None)
+        fields.pop("id", None)
 
-    if not fields:
-        return
+        if not fields:
+            return
 
-    users.update_one({"_id": user_id}, {"$set": fields}, upsert=True)
+        self.users.update_one({"_id": user_id}, {"$set": fields}, upsert=True)
 
+    def load_user_fields(
+        self, user_id: int, fields: set[str] | None = None
+    ) -> dict | None:
+        """Завантаження даних користувача з MongoDB"""
 
-def load_user_fields(user_id: int, fields: set[str] | None = None) -> dict | None:
-    """Завантаження даних користувача з MongoDB"""
+        if fields or fields is None:
+            projection = {f: 1 for f in fields} if fields else None
+        else:
+            return {}
 
-    if fields or fields is None:
-        projection = {f: 1 for f in fields} if fields else None
-    else:
-        return {}
+        raw_data = self.users.find_one({"_id": user_id}, projection)
 
-    raw_data = users.find_one({"_id": user_id}, projection)
+        if not raw_data:
+            return None
 
-    if not raw_data:
-        return None
+        data = dict(raw_data)
+        data.pop("_id", None)
 
-    data = dict(raw_data)
-    data.pop("_id", None)
+        return data
 
-    return data
+    def load_user(self, user_id: int) -> User | None:
+        """Завантаження користувача з MongoDB"""
 
-
-def load_user(user_id: int) -> User | None:
-    """Завантаження користувача з MongoDB"""
-
-    return utils.load_user(user_id, load_user_fields)
+        return utils.load_user(user_id, self.load_user_fields)

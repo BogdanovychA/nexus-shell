@@ -8,8 +8,9 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from config import postgres
-from storage import firebase, mongo
+from config import mongo, postgres
+from storage import firebase  # , mongo
+from storage.mongo import MongoManager
 from storage.sql_alchemy.postgresql import PostgresManager
 
 if TYPE_CHECKING:
@@ -115,25 +116,32 @@ class FirebaseStorage(StorageManager):
 
 class MongoStorage(StorageManager):
 
+    def __init__(self):
+        self.storage = MongoManager(
+            url=mongo.settings.url,
+            database=mongo.settings.db,
+            collection=mongo.settings.main_collection,
+        )
+
     async def save_user(self, user: User):
-        await asyncio.to_thread(mongo.save_user, user)
+        await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(mongo.load_user, user_id)
+        return await asyncio.to_thread(self.storage.load_user, user_id)
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
-        await asyncio.to_thread(mongo.update_user_fields, user_id, fields)
+        await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
 
     async def update_ai_settings(self, user_id: int, fields: dict) -> None:
-        await asyncio.to_thread(mongo.update_user_fields, user_id, fields)
+        await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
 
     async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
-        return await asyncio.to_thread(mongo.load_user_fields, user_id, {model})
+        return await asyncio.to_thread(self.storage.load_user_fields, user_id, {model})
 
     async def load_user_data(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
-        return await asyncio.to_thread(mongo.load_user_fields, user_id, fields)
+        return await asyncio.to_thread(self.storage.load_user_fields, user_id, fields)
 
     async def close(self):
-        pass  # todo
+        self.storage.client.close()
