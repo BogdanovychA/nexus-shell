@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Callable
+import inspect
+from typing import TYPE_CHECKING, Awaitable, Callable
 
 from aiogram.types import Message
 
@@ -65,12 +66,18 @@ def split_text(text: str, max_length: int = 4096):
     return [text[i : i + max_length] for i in range(0, len(text), max_length)]
 
 
-def create_user_instance(
-    user_id: int, fetcher: Callable[[int], dict | None]
+async def create_user_instance(
+    user_id: int,
+    fetcher: Callable[[int], dict | None] | Callable[[int], Awaitable[dict | None]],
 ) -> User | None:
     """Створює об'єкт User, використовуючи надану функцію отримання даних."""
 
-    data = fetcher(user_id)
+    result = fetcher(user_id)
+
+    if inspect.isawaitable(result):
+        data = await result
+    else:
+        data = result
 
     if not data:
         return None

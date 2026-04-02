@@ -69,7 +69,7 @@ class PostgresStorage(StorageManager):
         await self.storage.save_user(user)
 
     async def load_user(self, user_id: int) -> User | None:
-        raise NotImplementedError
+        return await utils.create_user_instance(user_id, self.storage.load_user_data)
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await self.storage.update_user_data(user_id, fields)
@@ -102,9 +102,7 @@ class FirebaseStorage(StorageManager):
         await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(
-            utils.create_user_instance, user_id, self.storage.load_user_fields
-        )
+        return await utils.create_user_instance(user_id, self.storage.load_user_fields)
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
@@ -137,9 +135,7 @@ class MongoStorage(StorageManager):
         await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(
-            utils.create_user_instance, user_id, self.storage.load_user_fields
-        )
+        return await utils.create_user_instance(user_id, self.storage.load_user_fields)
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
