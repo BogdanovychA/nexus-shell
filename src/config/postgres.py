@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from urllib.parse import quote_plus
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from config import bot
@@ -20,7 +22,11 @@ class PostgresConfig(BaseSettings):
 
     @property
     def url(self) -> str:
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.server}:{self.port}/{self.db}"
+
+        user = quote_plus(str(self.user))
+        password = quote_plus(str(self.password))
+
+        return f"postgresql+asyncpg://{user}:{password}@{self.server}:{self.port}/{self.db}"
 
 
 settings = PostgresConfig()

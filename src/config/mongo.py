@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from urllib.parse import quote_plus
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from config import bot
@@ -12,6 +14,7 @@ class MongoConfig(BaseSettings):
     password: str | None = None
     db: str = "nexus-shell"
     main_collection: str = "users"
+    uri: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=bot.settings.base_dir / ".env",
@@ -21,7 +24,14 @@ class MongoConfig(BaseSettings):
 
     @property
     def url(self) -> str:
-        return f"mongodb://{self.username}:{self.password}@{self.server}:{self.port}/"
+
+        if self.uri:
+            return self.uri
+        else:
+            user = quote_plus(str(self.username))
+            password = quote_plus(str(self.password))
+
+            return f"mongodb://{user}:{password}@{self.server}:{self.port}/"
 
 
 settings = MongoConfig()
