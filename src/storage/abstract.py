@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from config import mongo, postgres
-from storage import firebase  # , mongo
+from config import firebase, mongo, postgres
+from storage.firebase import FirebaseManager
 from storage.mongo import MongoManager
 from storage.sql_alchemy.postgresql import PostgresManager
 
@@ -90,28 +90,35 @@ class PostgresStorage(StorageManager):
 
 class FirebaseStorage(StorageManager):
 
+    def __init__(self):
+        self.storage = FirebaseManager(
+            fb_key_path=firebase.settings.path,
+            collection=firebase.settings.main_collection,
+            limit=firebase.settings.limit,
+        )
+
     async def save_user(self, user: User):
-        await asyncio.to_thread(firebase.save_user, user)
+        await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(firebase.load_user, user_id)
+        return await asyncio.to_thread(self.storage.load_user, user_id)
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
-        await asyncio.to_thread(firebase.update_user_fields, user_id, fields)
+        await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
 
     async def update_ai_settings(self, user_id: int, fields: dict) -> None:
-        await asyncio.to_thread(firebase.update_user_fields, user_id, fields)
+        await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
 
     async def load_ai_settings(self, user_id: int, model: str) -> dict | None:
-        return await asyncio.to_thread(firebase.load_user_fields, user_id, {model})
+        return await asyncio.to_thread(self.storage.load_user_fields, user_id, {model})
 
     async def load_user_data(
         self, user_id: int, fields: set[str] | None = None
     ) -> dict | None:
-        return await asyncio.to_thread(firebase.load_user_fields, user_id, fields)
+        return await asyncio.to_thread(self.storage.load_user_fields, user_id, fields)
 
     async def close(self):
-        pass  # У Firebase не потрібно закривати сесію
+        self.storage = None
 
 
 class MongoStorage(StorageManager):

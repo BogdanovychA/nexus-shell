@@ -1,72 +1,86 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-from config import firebase
 from models import User
 from utils import utils
 
-try:
-    app = firebase_admin.get_app()  # якщо вже ініціалізовано — отримуємо
-except ValueError:
-    cred = credentials.Certificate(firebase.settings.path)
-    app = firebase_admin.initialize_app(cred)  # ініціалізуємо лише один раз
 
-db = firestore.client(app)  # після цього можна створювати клієнти сервісів
+class FirebaseManager:
+    def __init__(self, fb_key_path: Path, collection: str, limit: int) -> None:
 
-DB = db.collection(firebase.settings.main_collection)
+        try:
+            self.app = firebase_admin.get_app()  # якщо вже ініціалізовано — отримуємо
+        except ValueError:
+            self.cred = credentials.Certificate(fb_key_path)
+            self.app = firebase_admin.initialize_app(
+                self.cred
+            )  # ініціалізуємо лише один раз
 
+        self.db = firestore.client(
+            self.app
+        )  # після цього можна створювати клієнти сервісів
+        self.DB = self.db.collection(collection)
 
-def save_user(user: User) -> None:
-    """Збереження користувача у Firebase Firestore"""
+        self.limit = limit
 
-    data = user.model_dump()
-    DB.document(str(user.id)).set(data, merge=True)
+    def save_user(self, user: User) -> None:
+        """Збереження користувача у Firebase Firestore"""
 
+        data = user.model_dump()
+        self.DB.document(str(user.id)).set(data, merge=True)
 
-def update_user_fields(user_id: int, fields: dict) -> None:
-    """Оновлення даних користувача у Firebase Firestore"""
+    def update_user_fields(self, user_id: int, fields: dict) -> None:
+        """Оновлення даних користувача у Firebase Firestore"""
 
-    DB.document(str(user_id)).set(fields, merge=True)
+        self.DB.document(str(user_id)).set(fields, merge=True)
 
+    def load_user_fields(
+        self, user_id: int, fields: set[str] | None = None
+    ) -> dict | None:
+        """Завантаження даних користувача з Firebase Firestore"""
 
-def load_user_fields(user_id: int, fields: set[str] | None = None) -> dict | None:
-    """Завантаження даних користувача з Firebase Firestore"""
+        doc_ref = self.DB.document(str(user_id))
 
-    doc_ref = DB.document(str(user_id))
+        doc = doc_ref.get(field_paths=fields) if fields else doc_ref.get()
 
-    doc = doc_ref.get(field_paths=fields) if fields else doc_ref.get()
+        return doc.to_dict() if doc.exists else None
 
-    return doc.to_dict() if doc.exists else None
+    def load_user(self, user_id: int) -> User | None:
+        """Завантаження користувача з Firebase Firestore"""
+        return utils.load_user(user_id, self.load_user_fields)
 
+    def get_users(self, limit: int | None = None, last_doc=None) -> list[User]:
+        """Отримуємо всіх користувачів з Firebase Firestore"""
 
-def load_user(user_id: int) -> User | None:
-    """Завантаження користувача з Firebase Firestore"""
-    return utils.load_user(user_id, load_user_fields)
+        if not limit:
+            limit = self.limit
 
+        users_list = []
 
-def get_users(limit: int = firebase.settings.limit, last_doc=None) -> list[User]:
-    """Отримуємо всіх користувачів з Firebase Firestore"""
+        query = self.DB.order_by("__name__").limit(limit)
 
-    users_list = []
+        if last_doc is not None:
+            query = query.start_after(last_doc)
 
-    query = DB.order_by("__name__").limit(limit)
+        docs = list(
+            query.get()
+        )  # .get() повертає не звичайний список, тому конвертуємо його
 
-    if last_doc is not None:
-        query = query.start_after(last_doc)
+        for doc in docs:
+            data = doc.to_dict()
+            user = User(**data)
+            users_list.append(user)
 
-    docs = list(
-        query.get()
-    )  # .get() повертає не звичайний список, тому конвертуємо його
+        if len(docs) == limit:
+            users_list += self.get_users(limit, docs[-1])
 
-    for doc in docs:
-        data = doc.to_dict()
-        user = User(**data)
-        users_list.append(user)
-
-    if len(docs) == limit:
-        users_list += get_users(limit, docs[-1])
-
-    return users_list
+        return users_list
