@@ -11,7 +11,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 from models import User
-from utils import utils
 
 
 class FirebaseManager:
@@ -53,10 +52,6 @@ class FirebaseManager:
         doc = doc_ref.get(field_paths=fields) if fields else doc_ref.get()
 
         return doc.to_dict() if doc.exists else None
-
-    def load_user(self, user_id: int) -> User | None:
-        """Завантаження користувача з Firebase Firestore"""
-        return utils.load_user(user_id, self.load_user_fields)
 
     def get_users(self, limit: int | None = None, last_doc=None) -> list[User]:
         """Отримуємо всіх користувачів з Firebase Firestore"""

@@ -65,12 +65,12 @@ def split_text(text: str, max_length: int = 4096):
     return [text[i : i + max_length] for i in range(0, len(text), max_length)]
 
 
-def load_user(
-    user_id: int, load_user_fields: Callable[[int], dict | None]
+def create_user_instance(
+    user_id: int, fetcher: Callable[[int], dict | None]
 ) -> User | None:
-    """Завантаження користувача з БД"""
+    """Створює об'єкт User, використовуючи надану функцію отримання даних."""
 
-    data = load_user_fields(user_id)
+    data = fetcher(user_id)
 
     if not data:
         return None

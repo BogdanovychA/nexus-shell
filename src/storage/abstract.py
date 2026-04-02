@@ -12,6 +12,7 @@ from config import firebase, mongo, postgres
 from storage.firebase import FirebaseManager
 from storage.mongo import MongoManager
 from storage.sql_alchemy.postgresql import PostgresManager
+from utils import utils
 
 if TYPE_CHECKING:
     from models import User
@@ -101,7 +102,9 @@ class FirebaseStorage(StorageManager):
         await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(self.storage.load_user, user_id)
+        return await asyncio.to_thread(
+            utils.create_user_instance, user_id, self.storage.load_user_fields
+        )
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
@@ -134,7 +137,9 @@ class MongoStorage(StorageManager):
         await asyncio.to_thread(self.storage.save_user, user)
 
     async def load_user(self, user_id: int) -> User | None:
-        return await asyncio.to_thread(self.storage.load_user, user_id)
+        return await asyncio.to_thread(
+            utils.create_user_instance, user_id, self.storage.load_user_fields
+        )
 
     async def update_user_data(self, user_id: int, fields: dict) -> None:
         await asyncio.to_thread(self.storage.update_user_fields, user_id, fields)
@@ -152,3 +157,11 @@ class MongoStorage(StorageManager):
 
     async def close(self):
         self.storage.client.close()
+
+
+if __name__ == "__main__":
+
+    async def main():
+        pass
+
+    asyncio.run(main())

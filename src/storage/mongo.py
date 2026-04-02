@@ -51,8 +51,3 @@ class MongoManager:
         data.pop("_id", None)
 
         return data
-
-    def load_user(self, user_id: int) -> User | None:
-        """Завантаження користувача з MongoDB"""
-
-        return utils.load_user(user_id, self.load_user_fields)
