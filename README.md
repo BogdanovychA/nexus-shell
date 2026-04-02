@@ -46,6 +46,7 @@ The plaintext key exists only in memory during requests to the AI provider.
 - [aiogram-i18n](https://github.com/aiogram/i18n) — i18n support (Fluent)
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — user data storage *(default)*
 - [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — PostgreSQL support *(alternative)*
+- [PyMongo](https://pymongo.readthedocs.io/) — MongoDB support *(alternative)*
 - [Redis](https://redis.io/) — FSM state storage
 - [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI clients
 - [cryptography](https://cryptography.io/) — API key encryption
@@ -129,7 +130,7 @@ Initialize the database schema (creates all tables):
 uv run python src/storage/sql_alchemy/models.py
 ```
 
-### Running with Docker Compose
+### Running with Docker Compose (PostgreSQL)
 
 For convenience, a `docker-compose.yml` is included that starts PostgreSQL, pgAdmin, Redis, and RedisInsight with a single command:
 
@@ -145,6 +146,58 @@ docker compose up -d
 | RedisInsight | `http://localhost:5541` | Redis web UI |
 
 > **Note:** Firebase credentials are still required when `MAIN__GLOBAL_STORAGE=Firebase` (the default). If you switch to PostgreSQL, the `firebase-admin_sdk.json` file and Firebase Admin SDK are not needed.
+
+---
+
+### Switching to MongoDB
+
+In your `.env` file, change the storage setting:
+
+```env
+MAIN__GLOBAL_STORAGE=MongoDB
+```
+
+MongoDB supports two connection modes depending on where your database is hosted.
+
+#### Option 1 — Docker container (local)
+
+Fill in the individual connection fields:
+
+```env
+MONGO_INITDB_ROOT_SERVER=localhost
+MONGO_INITDB_ROOT_PORT=27017
+MONGO_INITDB_ROOT_USERNAME=your_username
+MONGO_INITDB_ROOT_PASSWORD=your_password
+```
+
+Leave `MONGO_INITDB_ROOT_URI` commented out — if it is set, it takes priority over the individual fields.
+
+#### Option 2 — Cloud database (e.g. MongoDB Atlas)
+
+Set the connection string directly via `MONGO_INITDB_ROOT_URI`:
+
+```env
+MONGO_INITDB_ROOT_URI="mongodb+srv://your_username:your_password@your_cluster.your_server/?appName=your_app_name"
+```
+
+The individual fields (`SERVER`, `PORT`, `USERNAME`, `PASSWORD`) are ignored when `URI` is provided.
+
+### Running with Docker Compose (MongoDB)
+
+```bash
+docker compose up -d
+```
+
+| Service | URL | Description |
+|---|---|---|
+| MongoDB | `localhost:${MONGO_INITDB_ROOT_PORT}` | Main database |
+| Mongo Express | `http://localhost:8082` | MongoDB web UI |
+| Redis | `localhost:${REDIS__PORT}` | FSM state storage |
+| RedisInsight | `http://localhost:5541` | Redis web UI |
+
+To log in to Mongo Express, use the `ME_CONFIG_BASICAUTH_USERNAME` / `ME_CONFIG_BASICAUTH_PASSWORD` values from your `.env` file.
+
+> **Note:** When using a cloud database, there is no need to start the MongoDB container. You can bring up only the Redis services: `docker compose up db-redis redisinsight -d`.
 
 ---
 

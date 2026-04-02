@@ -46,6 +46,7 @@ API-ключі користувачів шифруються перед збер
 - [aiogram-i18n](https://github.com/aiogram/i18n) — багатомовність (Fluent)
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — збереження користувачів *(за замовчуванням)*
 - [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — підтримка PostgreSQL *(альтернатива)*
+- [PyMongo](https://pymongo.readthedocs.io/) — підтримка MongoDB *(альтернатива)*
 - [Redis](https://redis.io/) — FSM-стан
 - [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти
 - [cryptography](https://cryptography.io/) — шифрування API-ключів
@@ -99,7 +100,7 @@ uv run python src/main.py
 
 ## 🗄 Сховище даних
 
-За замовчуванням бот використовує **Firebase Firestore**. Як альтернативу можна підключити **PostgreSQL**.
+За замовчуванням бот використовує **Firebase Firestore**. Як альтернативу можна підключити **PostgreSQL** або **MongoDB**.
 
 ### Перемикання на PostgreSQL
 
@@ -129,7 +130,7 @@ POSTGRES_DB=
 uv run python src/storage/sql_alchemy/models.py
 ```
 
-### Запуск через Docker Compose
+### Запуск через Docker Compose (PostgreSQL)
 
 Для зручності в репозиторії є `docker-compose.yml`, який одною командою піднімає PostgreSQL, pgAdmin, Redis та RedisInsight:
 
@@ -145,6 +146,58 @@ docker compose up -d
 | RedisInsight | `http://localhost:5541` | Веб-інтерфейс Redis |
 
 > **Примітка:** Firebase credentials потрібні лише при `MAIN__GLOBAL_STORAGE=Firebase` (за замовчуванням). При переході на PostgreSQL файл `firebase-admin_sdk.json` та Firebase Admin SDK не потрібні.
+
+---
+
+### Перемикання на MongoDB
+
+У файлі `.env` змінити налаштування сховища:
+
+```env
+MAIN__GLOBAL_STORAGE=MongoDB
+```
+
+MongoDB підтримує два режими підключення залежно від того, де розгорнута база даних.
+
+#### Варіант 1 — Docker-контейнер (локально)
+
+Заповнити окремі поля підключення:
+
+```env
+MONGO_INITDB_ROOT_SERVER=localhost
+MONGO_INITDB_ROOT_PORT=27017
+MONGO_INITDB_ROOT_USERNAME=your_username
+MONGO_INITDB_ROOT_PASSWORD=your_password
+```
+
+`MONGO_INITDB_ROOT_URI` залишати закоментованим — якщо він заданий, він має пріоритет над окремими полями.
+
+#### Варіант 2 — Хмарна БД (наприклад, MongoDB Atlas)
+
+Передати готовий рядок підключення через `MONGO_INITDB_ROOT_URI`:
+
+```env
+MONGO_INITDB_ROOT_URI="mongodb+srv://your_username:your_password@your_cluster.your_server/?appName=your_app_name"
+```
+
+Окремі поля (`SERVER`, `PORT`, `USERNAME`, `PASSWORD`) при цьому ігноруються.
+
+### Запуск через Docker Compose (MongoDB)
+
+```bash
+docker compose up -d
+```
+
+| Сервіс | URL | Опис |
+|---|---|---|
+| MongoDB | `localhost:${MONGO_INITDB_ROOT_PORT}` | Основна база даних |
+| Mongo Express | `http://localhost:8082` | Веб-інтерфейс MongoDB |
+| Redis | `localhost:${REDIS__PORT}` | Збереження FSM-стану |
+| RedisInsight | `http://localhost:5541` | Веб-інтерфейс Redis |
+
+Для входу в Mongo Express використовувати значення `ME_CONFIG_BASICAUTH_USERNAME` / `ME_CONFIG_BASICAUTH_PASSWORD` з файлу `.env`.
+
+> **Примітка:** При використанні хмарної БД піднімати MongoDB-контейнер не потрібно — достатньо запустити лише Redis: `docker compose up db-redis redisinsight -d`.
 
 ---
 
