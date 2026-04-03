@@ -42,3 +42,6 @@ docker_data/secret/*
 Dockerfile
 docker-compose.yml
 .dockerignore
+
+# Claude Code
+CLAUDE.md
