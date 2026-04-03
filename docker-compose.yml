@@ -1,7 +1,7 @@
 name: nexus-shell
 
 services:
-  mongodb:
+  mongo:
     image: mongo:8
     container_name: nexus-shell_mongodb
     restart: always
@@ -17,16 +17,16 @@ services:
     container_name: nexus-shell_mongo-express
     restart: always
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_MONGODB_PORT=27017
     env_file:
       - .env
     ports:
       - "8082:8081"
     depends_on:
-      - mongodb
+      - mongo
 
-  db-postgres:
+  postgres:
     image: postgres:16-alpine
     container_name: nexus-shell_postgres
     restart: always
@@ -48,9 +48,9 @@ services:
     ports:
       - "8033:80"
     depends_on:
-      - db-postgres
+      - postgres
 
-  db-redis:
+  redis:
     image: redis:7.2-alpine
     container_name: nexus-shell_redis
     restart: always
@@ -86,15 +86,32 @@ services:
     ports:
       - "5541:5540"
     depends_on:
-      - db-redis
+      - redis
 
 #  redis-commander:
 #      image: rediscommander/redis-commander:latest
 #      container_name: nexus-shell_redis_commander
 #      restart: always
 #      environment:
-#        - REDIS_HOSTS=local:db-redis:6379:0:${REDIS__PASSWORD}:${REDIS__USERNAME}
+#        - REDIS_HOSTS=local:redis:6379:0:${REDIS__PASSWORD}:${REDIS__USERNAME}
 #      ports:
-#        - "8082:8081"
+#        - "8083:8081"
 #      depends_on:
-#        - db-redis
+#        - redis
+
+  bot:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      image: nexus-shell:latest
+      container_name: nexus-shell_bot
+      restart: always
+      env_file:
+        - .env
+      volumes:
+        - ./docker_data/secret:/app/src/secret
+        - ./downloads:/app/downloads
+      depends_on:
+        - redis
+        - postgres
+        - mongo
