@@ -10,12 +10,13 @@ Telegram-бот для взаємодії з провідними мовними
 
 - Підтримка трьох AI-провайдерів: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
 - Персональні налаштування для кожного користувача (API-ключ + системний промпт)
-- Збереження налаштувань у **Firebase Firestore** або **PostgreSQL** (на вибір)
+- Збереження налаштувань у **Firebase Firestore**, **PostgreSQL** або **MongoDB** (на вибір)
 - Кешування стану у **Redis**
 - API-ключі зберігаються у **зашифрованому вигляді** (AES-128, Fernet)
 - Автоматична відправка довгих відповідей як файл (обхід обмежень Telegram)
 - FSM-логіка для покрокового налаштування бота
 - Підтримка **кількох мов** інтерфейсу (🇺🇦 Українська, 🇬🇧 English, 🇵🇱 Polski)
+- **Docker-ready** — весь стек піднімається однією командою `docker compose up -d`
 
 ---
 
@@ -198,6 +199,54 @@ docker compose up -d
 Для входу в Mongo Express використовувати значення `ME_CONFIG_BASICAUTH_USERNAME` / `ME_CONFIG_BASICAUTH_PASSWORD` з файлу `.env`.
 
 > **Примітка:** При використанні хмарної БД піднімати MongoDB-контейнер не потрібно — достатньо запустити лише Redis: `docker compose up db-redis redisinsight -d`.
+
+---
+
+## 🐳 Деплой через Docker
+
+`docker-compose.yml` містить сервіс `bot`, який збирає і запускає бота разом з усією інфраструктурою (Redis, PostgreSQL / MongoDB).
+
+### 1. Підготувати `.env` файл
+
+```bash
+mv .env.example .env
+nano .env
+```
+
+### 2. Firebase credentials (якщо використовується Firebase)
+
+Розмісти файл `firebase-admin_sdk.json` у директорії:
+```
+docker_data/secret/firebase-admin_sdk.json
+```
+
+Він буде автоматично змонтований у контейнер за шляхом `src/secret/firebase-admin_sdk.json`.
+
+> Якщо як сховище використовується PostgreSQL або MongoDB — цей файл не потрібен.
+
+### 3. Зібрати та запустити всі сервіси
+
+```bash
+docker compose up -d --build
+```
+
+| Сервіс | URL | Опис |
+|---|---|---|
+| Bot | — | Telegram-бот |
+| PostgreSQL | `localhost:${POSTGRES_PORT}` | Основна БД (PostgreSQL) |
+| pgAdmin | `http://localhost:8033` | Веб-інтерфейс PostgreSQL |
+| MongoDB | `localhost:${MONGO_INITDB_ROOT_PORT}` | Основна БД (MongoDB) |
+| Mongo Express | `http://localhost:8082` | Веб-інтерфейс MongoDB |
+| Redis | `localhost:${REDIS__PORT}` | Збереження FSM-стану |
+| RedisInsight | `http://localhost:5541` | Веб-інтерфейс Redis |
+
+> Піднімати всі сервіси одночасно не обов'язково. Наприклад, якщо використовується PostgreSQL, MongoDB-контейнер просто не буде задіяний — на роботу бота це не впливає.
+
+### 4. Переглянути логи
+
+```bash
+docker compose logs -f bot
+```
 
 ---
 

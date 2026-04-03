@@ -10,12 +10,13 @@ A Telegram bot for interacting with leading language models — Gemini, ChatGPT,
 
 - Support for three AI providers: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
 - Per-user personalized settings (API key + system prompt)
-- Settings stored in **Firebase Firestore** or **PostgreSQL** (configurable)
+- Settings stored in **Firebase Firestore**, **PostgreSQL**, or **MongoDB** (configurable)
 - State caching in **Redis**
 - API keys stored **encrypted** (AES-128 via Fernet)
 - Automatic sending of long responses as a file (bypasses Telegram message limits)
 - FSM-based step-by-step bot configuration flow
 - **Multi-language** interface support (🇺🇦 Ukrainian, 🇬🇧 English, 🇵🇱 Polish)
+- **Docker-ready** — run the entire stack with a single `docker compose up -d`
 
 ---
 
@@ -100,7 +101,7 @@ uv run python src/main.py
 
 ## 🗄 Storage Backend
 
-By default the bot uses **Firebase Firestore**. As an alternative, you can switch to **PostgreSQL**.
+By default the bot uses **Firebase Firestore**. As an alternative, you can switch to **PostgreSQL** or **MongoDB**.
 
 ### Switching to PostgreSQL
 
@@ -198,6 +199,54 @@ docker compose up -d
 To log in to Mongo Express, use the `ME_CONFIG_BASICAUTH_USERNAME` / `ME_CONFIG_BASICAUTH_PASSWORD` values from your `.env` file.
 
 > **Note:** When using a cloud database, there is no need to start the MongoDB container. You can bring up only the Redis services: `docker compose up db-redis redisinsight -d`.
+
+---
+
+## 🐳 Deploy with Docker
+
+The `docker-compose.yml` includes a `bot` service that builds and runs the bot alongside all infrastructure (Redis, PostgreSQL / MongoDB).
+
+### 1. Prepare the `.env` file
+
+```bash
+mv .env.example .env
+nano .env
+```
+
+### 2. Firebase credentials (if using Firebase)
+
+Place the `firebase-admin_sdk.json` file in:
+```
+docker_data/secret/firebase-admin_sdk.json
+```
+
+It will be mounted into the container at `src/secret/firebase-admin_sdk.json` automatically.
+
+> If you use PostgreSQL or MongoDB as storage, this file is not needed.
+
+### 3. Build and start all services
+
+```bash
+docker compose up -d --build
+```
+
+| Service | URL | Description |
+|---|---|---|
+| Bot | — | Telegram bot |
+| PostgreSQL | `localhost:${POSTGRES_PORT}` | Main database (PostgreSQL) |
+| pgAdmin | `http://localhost:8033` | PostgreSQL web UI |
+| MongoDB | `localhost:${MONGO_INITDB_ROOT_PORT}` | Main database (MongoDB) |
+| Mongo Express | `http://localhost:8082` | MongoDB web UI |
+| Redis | `localhost:${REDIS__PORT}` | FSM state storage |
+| RedisInsight | `http://localhost:5541` | Redis web UI |
+
+> You don't need to start all services at once. For example, if you use PostgreSQL, the MongoDB container can be left unused — it won't affect the bot.
+
+### 4. View logs
+
+```bash
+docker compose logs -f bot
+```
 
 ---
 
