@@ -35,8 +35,8 @@ src/temp/
 build*/
 
 # Docker
-docker_data/*
-!docker_data/secret/.gitkeep
+docker_data/**
+!**/.gitkeep
 Dockerfile
 docker-compose.yml
 .dockerignore
