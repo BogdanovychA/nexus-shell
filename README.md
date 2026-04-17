@@ -1,5 +1,7 @@
 # 🤖 Nexus Shell AI Agent
 
+![GitHub License](https://img.shields.io/github/license/BogdanovychA/nexus-shell?logoColor=grey&color=blue)
+
 > 🌐 **Translations:** [🇺🇦 Українська](README.uk.md)
 
 A Telegram bot for interacting with leading language models — Gemini, ChatGPT, and Claude — through a single unified interface. Each user configures their own API key and system prompt.
