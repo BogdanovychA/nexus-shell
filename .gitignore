@@ -38,6 +38,7 @@ docker_data/secret/*
 
 #
 **/*.tmp
+**/*.swp
 
 # Clouds
 **/.stfolder/
@@ -47,4 +48,3 @@ docker_data/secret/*
 **/~syncthing~*.tmp
 **/*sync-conflict*
 **/*conflicted*
-
