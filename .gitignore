@@ -35,3 +35,16 @@ docker_data/*
 !docker_data/secret/
 docker_data/secret/*
 !docker_data/secret/.gitkeep
+
+#
+**/*.tmp
+
+# Clouds
+**/.stfolder/
+**/.stversions/
+**/.stignore
+**/.syncthing.*.tmp
+**/~syncthing~*.tmp
+**/*sync-conflict*
+**/*conflicted*
+
