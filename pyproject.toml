@@ -5,20 +5,20 @@ description = "Nexus Shell AI Agent"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "aiogram==3.26.0",
+    "aiogram==3.27.0",
     "aiogram-i18n==1.5",
-    "anthropic==0.88.0",
-    "cryptography==46.0.6",
+    "anthropic==0.96.0",
+    "cryptography==46.0.7",
     "firebase-admin==7.3.0",
     "fluent-runtime==0.4.0",
-    "google-genai==1.70.0",
+    "google-genai==1.73.1",
     "openai==2.32.0",
-    "pydantic-settings==2.13.1",
-    "pydantic>=2.12.5",
+    "pydantic-settings==2.14.0",
+    "pydantic==2.12.5",
     "redis==7.4.0",
     "sqlalchemy==2.0.49",
     "asyncpg==0.31.0",
-    "pymongo==4.16.0",
+    "pymongo==4.17.0",
 ]
 
 [dependency-groups]
