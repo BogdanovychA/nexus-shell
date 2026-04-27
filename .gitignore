@@ -35,10 +35,12 @@ docker_data/*
 !docker_data/secret/
 docker_data/secret/*
 !docker_data/secret/.gitkeep
-docker_data/secret/redis/*
-!docker_data/secret/redis/.gitkeep
-docker_data/secret/redisinsight/*
-!docker_data/secret/redisinsight/.gitkeep
+!docker_data/redis/
+docker_data/redis/*
+!docker_data/redis/.gitkeep
+!docker_data/redisinsight/
+docker_data/redisinsight/*
+!docker_data/redisinsight/.gitkeep
 
 #
 **/*.tmp

@@ -36,17 +36,14 @@ locales
 README*
 LICENSE
 AUTHORS.md
-CLAUDE.md
 FUNDING.yml
+CLAUDE.md
 
 # Docker
 docker_data/*
 Dockerfile
 docker-compose.yml
 .dockerignore
-
-# Claude Code
-CLAUDE.md
 
 #
 **/*.tmp
