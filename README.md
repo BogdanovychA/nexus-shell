@@ -289,6 +289,12 @@ journalctl -u nexus-shell -f
 
 ---
 
+## 📑 Citation
+
+If you use this software in your research or project, please cite it using the metadata from the `CITATION.cff` file.
+
+---
+
 ## Links
 
 * [Bot on Telegram](https://t.me/NexusShellBot)

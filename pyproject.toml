@@ -4,6 +4,20 @@ version = "1.1.2"
 description = "Nexus Shell AI Agent"
 readme = "README.md"
 requires-python = ">=3.14"
+authors = [
+    { name = "Andrii Bogdanovych", email = "a@bogdanovych.org" }
+]
+license = "EUPL-1.2"
+keywords = [
+    "python", "telegram", "artificial intelligence", "digital-transformation",
+    "open-source", "eupl-license", "automation", "ukraine"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Natural Language :: Ukrainian",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "aiogram==3.27.0",
     "aiogram-i18n==1.5",
@@ -29,6 +43,11 @@ dev = [
     "pytest",
     "pytest-asyncio",
 ]
+
+[project.urls]
+"Homepage" = "https://www.bogdanovych.org"
+"Repository" = "https://github.com/BogdanovychA/nexus-shell"
+"Bug Tracker" = "https://github.com/BogdanovychA/nexus-shell/issues"
 
 [tool.black]
 line-length = 88
