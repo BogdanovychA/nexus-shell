@@ -10,4 +10,4 @@ date-released: 2026-04-27
 abstract: "Nexus Shell is an open-source AI agent and Telegram bot designed to provide a unified interface for interacting with multiple Large Language Models (LLMs), including Google Gemini, OpenAI ChatGPT, and Anthropic Claude. It features per-user configuration, secure API key encryption, and flexible storage backends (Firebase, PostgreSQL, MongoDB), making it a versatile tool for AI-driven automation and personal productivity."
 repository-code: "https://github.com/BogdanovychA/nexus-shell"
 license: EUPL-1.2
-doi:
+doi: 10.5281/zenodo.19817221

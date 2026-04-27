@@ -1,6 +1,6 @@
 # 🤖 Nexus Shell AI Agent
 
-![GitHub License](https://img.shields.io/github/license/BogdanovychA/nexus-shell?logoColor=grey&color=blue)
+[![DOI](https://zenodo.org/badge/1173438073.svg)](https://doi.org/10.5281/zenodo.19817221) ![GitHub License](https://img.shields.io/github/license/BogdanovychA/nexus-shell?logoColor=grey&color=blue)
 
 > 🌐 **Translations:** [🇺🇦 Українська](README.uk.md)
 

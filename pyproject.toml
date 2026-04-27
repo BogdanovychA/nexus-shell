@@ -47,6 +47,7 @@ dev = [
 [project.urls]
 "Homepage" = "https://www.bogdanovych.org"
 "Repository" = "https://github.com/BogdanovychA/nexus-shell"
+"DOI" = "https://doi.org/10.5281/zenodo.19817221"
 "Bug Tracker" = "https://github.com/BogdanovychA/nexus-shell/issues"
 
 [tool.black]
