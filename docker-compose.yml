@@ -1,54 +1,54 @@
 name: nexus-shell
 
 services:
-  mongo:
-    image: mongo:8
-    container_name: nexus-shell_mongodb
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./docker_data/mongo:/data/db
-    ports:
-      - "${MONGO_INITDB_ROOT_PORT}:27017"
+#  mongo:
+#    image: mongo:8
+#    container_name: nexus-shell_mongodb
+#    restart: always
+#    env_file:
+#      - .env
+#    volumes:
+#      - ./docker_data/mongo:/data/db
+#    ports:
+#      - "${MONGO_INITDB_ROOT_PORT}:27017"
 
-  mongo-express:
-    image: mongo-express:latest
-    container_name: nexus-shell_mongo-express
-    restart: always
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo
-      - ME_CONFIG_MONGODB_PORT=27017
-    env_file:
-      - .env
-    ports:
-      - "8082:8081"
-    depends_on:
-      - mongo
+#  mongo-express:
+#    image: mongo-express:latest
+#    container_name: nexus-shell_mongo-express
+#    restart: always
+#    environment:
+#      - ME_CONFIG_MONGODB_SERVER=mongo
+#      - ME_CONFIG_MONGODB_PORT=27017
+#    env_file:
+#      - .env
+#    ports:
+#      - "8082:8081"
+#    depends_on:
+#      - mongo
 
-  postgres:
-    image: postgres:16-alpine
-    container_name: nexus-shell_postgres
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./docker_data/postgres:/var/lib/postgresql/data
-    ports:
-      - "${POSTGRES_PORT}:5432"
+#  postgres:
+#    image: postgres:16-alpine
+#    container_name: nexus-shell_postgres
+#    restart: always
+#    env_file:
+#      - .env
+#    volumes:
+#      - ./docker_data/postgres:/var/lib/postgresql/data
+#    ports:
+#      - "${POSTGRES_PORT}:5432"
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: nexus-shell_pgadmin
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./docker_data/pgadmin:/var/lib/pgadmin
-    ports:
-      - "8033:80"
-    depends_on:
-      - postgres
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    container_name: nexus-shell_pgadmin
+#    restart: always
+#    env_file:
+#      - .env
+#    volumes:
+#      - ./docker_data/pgadmin:/var/lib/pgadmin
+#    ports:
+#      - "8033:80"
+#    depends_on:
+#      - postgres
 
   redis:
     image: redis:7.2-alpine
@@ -84,7 +84,7 @@ services:
     volumes:
       - ./docker_data/redisinsight:/data
     ports:
-      - "5541:5540"
+      - "5540:5540"
     depends_on:
       - redis
 
@@ -103,15 +103,17 @@ services:
       build:
         context: .
         dockerfile: Dockerfile
-      image: nexus-shell:latest
+      image: nexus-shell:${APP_VERSION}
+      pull_policy: missing
       container_name: nexus-shell_bot
       restart: always
       env_file:
         - .env
       volumes:
         - ./docker_data/secret:/app/src/secret
+        - ./locales:/app/locales
         - ./downloads:/app/downloads
       depends_on:
         - redis
-        - postgres
-        - mongo
+#        - postgres
+#        - mongo

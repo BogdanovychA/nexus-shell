@@ -21,24 +21,26 @@ wheels/
 *.egg-info
 
 # Tests
+tests
 htmlcov/
 .pytest_cache/
 .coverage
 
 # Project
 src/secret/*
-!src/secret/.gitkeep
 downloads/*
-!downloads/.gitkeep
 bin/
 src/temp/
 build*/
+locales
+README*
+LICENSE
+AUTHORS.md
+CLAUDE.md
+FUNDING.yml
 
 # Docker
 docker_data/*
-!docker_data/secret/
-docker_data/secret/*
-!docker_data/secret/.gitkeep
 Dockerfile
 docker-compose.yml
 .dockerignore
