@@ -1,50 +1,68 @@
-# IDEs
-.idea/
-.vscode/
+### Agents
+/.agents/
 
-# Virtual environments
-.venv*/
+### IDEs
+**/.idea/
+**/.vscode/
 
-# Environmental variables
-.env
+### Virtual environments
+**/.venv*/
 
-# Python-generated files
-**/__pycache__/
-**/*.pyc
-*.py[oc]
-dist/
-wheels/
-*.egg-info
+### Environmental variables
+**/.env
+**/.env.*
+!**/.env.example
 
-# Tests
-htmlcov/
-.pytest_cache/
-.coverage
-
-# Project
-src/secret/*
-!src/secret/.gitkeep
-downloads/*
-!downloads/.gitkeep
-bin/
-src/temp/
-build*/
-
-# Docker
-docker_data/*
-!docker_data/secret/
-docker_data/secret/*
-!docker_data/secret/.gitkeep
-!docker_data/redis/
-docker_data/redis/*
-!docker_data/redis/.gitkeep
-!docker_data/redisinsight/
-docker_data/redisinsight/*
-!docker_data/redisinsight/.gitkeep
-
-#
+# OS
 **/*.tmp
 **/*.swp
+**/*.swo
+**/.cache
+**/.DS_Store
+**/Thumbs.db
+**/.thumbnails
+
+### Logs
+**/*.log
+**/logs/
+
+### Python-generated files
+**/__pypackages__/
+**/__pycache__/
+**/*.pyc
+**/*.py[oc]
+**/dist/
+**/wheels/
+**/*.egg-info
+**/build*/
+**/.flet/
+
+### Tests
+**/htmlcov/
+**/.pytest_cache/
+**/.coverage
+**/.tox/
+**/.nox/
+
+# Project
+/src/secret/*
+!/src/secret/.gitkeep
+/downloads/*
+!/downloads/.gitkeep
+/bin/
+/src/temp/
+
+# Docker
+/docker_data/*
+!/docker_data/secret/
+/docker_data/secret/*
+!/docker_data/secret/.gitkeep
+!/docker_data/redis/
+/docker_data/redis/*
+!/docker_data/redis/.gitkeep
+!/docker_data/redisinsight/
+/docker_data/redisinsight/*
+!/docker_data/redisinsight/.gitkeep
 
 # Clouds
 **/.stfolder/

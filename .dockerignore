@@ -1,53 +1,77 @@
-# Git
-.git
-.gitignore
+### Agents
+/.agents/
 
-# IDEs
-.idea/
-.vscode/
+### Git & Metadata
+**/.git/
+**/.gitignore
+**/.pre-commit-config.yaml
 
-# Virtual environments
-.venv*/
+### Docs & Info (not needed in container)
+/docs/
+/AUTHORS.md
+/LICENSE
+/NOTICE
+/SECURITY.md
+/CONTRIBUTING.md
+/CITATION.cff
+/README*
+/FUNDING.yml
+/CLAUDE.md
 
-# Environmental variables
-.env
+### IDEs
+**/.idea/
+**/.vscode/
 
-# Python-generated files
-**/__pycache__/
-**/*.pyc
-*.py[oc]
-dist/
-wheels/
-*.egg-info
+### Virtual environments
+**/.venv*/
 
-# Tests
-tests
-htmlcov/
-.pytest_cache/
-.coverage
+### Environmental variables
+**/.env
+**/.env.*
 
-# Project
-src/secret/*
-downloads/*
-bin/
-src/temp/
-build*/
-locales
-README*
-LICENSE
-AUTHORS.md
-FUNDING.yml
-CLAUDE.md
-
-# Docker
-docker_data/*
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-#
+# OS
 **/*.tmp
 **/*.swp
+**/*.swo
+**/.cache
+**/.DS_Store
+**/Thumbs.db
+**/.thumbnails
+
+### Logs
+**/*.log
+**/logs/
+
+### Python-generated files
+**/__pypackages__/
+**/__pycache__/
+**/*.pyc
+**/*.py[oc]
+**/dist/
+**/wheels/
+**/*.egg-info
+**/build*/
+**/.flet/
+
+### Tests
+**/htmlcov/
+**/.pytest_cache/
+**/.coverage
+**/.tox/
+**/.nox/
+
+# Project
+/src/secret/*
+/downloads/*
+/bin/
+/src/temp/
+/locales
+
+# Docker
+/docker_data/*
+/Dockerfile
+/docker-compose.yml
+/.dockerignore
 
 # Clouds
 **/.stfolder/
