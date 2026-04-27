@@ -72,8 +72,8 @@ services:
       - "-select"
     volumes:
       - ./docker_data/redis:/data
-    ports:
-      - "${REDIS__PORT}:6379"
+#    ports:
+#      - "${REDIS__PORT}:6379"
 
   redisinsight:
     image: redis/redisinsight:latest
