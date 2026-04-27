@@ -76,7 +76,7 @@ services:
 #      - "${REDIS__PORT}:6379"
 
   redisinsight:
-    image: redis/redisinsight:latest
+    image: redis/redisinsight:3.4.2
     container_name: nexus-shell_redisinsight
     restart: always
     environment:
