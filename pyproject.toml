@@ -38,8 +38,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre_commit",
-    "black",
-    "isort",
+    "ruff",
     "pytest",
     "pytest-asyncio",
 ]
@@ -50,10 +49,9 @@ dev = [
 "DOI" = "https://doi.org/10.5281/zenodo.19817221"
 "Bug Tracker" = "https://github.com/BogdanovychA/nexus-shell/issues"
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ['py314']
-skip-string-normalization = true
+target-version = "py314"
 
-[tool.isort]
-profile = "black"
+[tool.ruff.format]
+quote-style = "preserve"
