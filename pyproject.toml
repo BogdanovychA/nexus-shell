@@ -53,5 +53,9 @@ dev = [
 line-length = 88
 target-version = "py314"
 
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
 [tool.ruff.format]
 quote-style = "preserve"
