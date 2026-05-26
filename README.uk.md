@@ -12,7 +12,7 @@ Telegram-бот для взаємодії з провідними мовними
 
 ## ✨ Можливості
 
-- Підтримка трьох AI-провайдерів: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
+- Підтримка чотирьох AI-провайдерів: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude** та **Lapathoniia**
 - Персональні налаштування для кожного користувача (API-ключ + системний промпт)
 - Збереження налаштувань у **Firebase Firestore**, **PostgreSQL** або **MongoDB** (на вибір)
 - Кешування стану у **Redis**
@@ -53,7 +53,7 @@ API-ключі користувачів шифруються перед збер
 - [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — підтримка PostgreSQL *(альтернатива)*
 - [PyMongo](https://pymongo.readthedocs.io/) — підтримка MongoDB *(альтернатива)*
 - [Redis](https://redis.io/) — FSM-стан
-- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти
+- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI-клієнти (включаючи кастомні сумісні з OpenAI ендпоінти)
 - [cryptography](https://cryptography.io/) — шифрування API-ключів
 - [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) — конфігурація через `.env`
 - [uv](https://github.com/astral-sh/uv) — менеджер залежностей
@@ -288,6 +288,7 @@ journalctl -u nexus-shell -f
 - **Gemini** — [Google AI Studio](https://aistudio.google.com/app/api-keys)
 - **ChatGPT** — [OpenAI Platform](https://platform.openai.com/account/api-keys)
 - **Claude** — [Anthropic Console](https://platform.claude.com/settings/keys)
+- **Lapathoniia** — [Lapathoniia](https://lapathoniia.top)
 
 ---
 

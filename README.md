@@ -12,7 +12,7 @@ A Telegram bot for interacting with leading language models — Gemini, ChatGPT,
 
 ## ✨ Features
 
-- Support for three AI providers: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**
+- Support for four AI providers: **Google Gemini**, **OpenAI ChatGPT**, **Anthropic Claude**, and **Lapathoniia**
 - Per-user personalized settings (API key + system prompt)
 - Settings stored in **Firebase Firestore**, **PostgreSQL**, or **MongoDB** (configurable)
 - State caching in **Redis**
@@ -53,7 +53,7 @@ The plaintext key exists only in memory during requests to the AI provider.
 - [SQLAlchemy](https://docs.sqlalchemy.org/) + [asyncpg](https://magicstack.github.io/asyncpg/) — PostgreSQL support *(alternative)*
 - [PyMongo](https://pymongo.readthedocs.io/) — MongoDB support *(alternative)*
 - [Redis](https://redis.io/) — FSM state storage
-- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI clients
+- [anthropic](https://docs.anthropic.com/) / [openai](https://platform.openai.com/docs) / [google-genai](https://ai.google.dev/) — AI clients (including custom OpenAI-compatible endpoints)
 - [cryptography](https://cryptography.io/) — API key encryption
 - [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) — configuration via `.env`
 - [uv](https://github.com/astral-sh/uv) — dependency manager
@@ -288,6 +288,7 @@ journalctl -u nexus-shell -f
 - **Gemini** — [Google AI Studio](https://aistudio.google.com/app/api-keys)
 - **ChatGPT** — [OpenAI Platform](https://platform.openai.com/account/api-keys)
 - **Claude** — [Anthropic Console](https://platform.claude.com/settings/keys)
+- **Lapathoniia** — [Lapathoniia](https://lapathoniia.top)
 
 ---
 
