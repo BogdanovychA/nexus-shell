@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict
 
 
 class User(BaseModel):
-
     model_config = ConfigDict(from_attributes=True, extra='ignore')
 
     id: int
@@ -29,7 +28,6 @@ class FileType(StrEnum):
 
 
 class AISetup(StatesGroup):
-
     waiting_for_model = State()
     waiting_for_token = State()
     waiting_for_prompt = State()
@@ -45,6 +43,7 @@ class AIModels(StrEnum):
     GEMINI = "Gemini"
     GPT = "ChatGPT"
     CLAUDE = "Claude"
+    LAPA = "Lapathoniia"
 
 
 class GlobalStorage(StrEnum):

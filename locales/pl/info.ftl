@@ -36,6 +36,9 @@ info-help-text =
     🔹 ChatGPT (OpenAI):
     { $chatgpt_url }
 
+    🔹 Lapathoniia:
+    { $lapa_url }
+
     ---
     ⚠️ Ważne:
     • Klucze są używane wyłącznie do zapytań do modeli.

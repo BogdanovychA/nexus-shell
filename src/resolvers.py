@@ -18,8 +18,9 @@ from utils.locale_manager import LANGUAGES
 
 
 if TYPE_CHECKING:
-    import storage.abstract
     from aiogram_i18n import I18nContext
+
+    import storage.abstract
 
     # from aiogram import Bot
 
@@ -36,6 +37,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from ai.chat_gpt import ChatGPT
 from ai.claude import Claude
 from ai.gemini import Gemini
+from ai.lapathoniia import Lapathoniia
 from models import AIModels, AISetup, User, Work
 
 # DOWNLOAD_PATH = bot.settings.base_dir / "downloads"
@@ -112,6 +114,11 @@ def _create_model_buttons():
             text=AIModels.CLAUDE, callback_data=f"set_model:{AIModels.CLAUDE}"
         )
     )
+    builder.add(
+        InlineKeyboardButton(
+            text=AIModels.LAPA, callback_data=f"set_model:{AIModels.LAPA}"
+        )
+    )
 
     builder.adjust(1)  # По одній в рядок
 
@@ -122,7 +129,6 @@ def _create_locale_buttons():
     builder = InlineKeyboardBuilder()
 
     for lang in LANGUAGES:
-
         builder.add(
             InlineKeyboardButton(text=lang.upper(), callback_data=f"locale:{lang}")
         )
@@ -175,6 +181,7 @@ async def help_command(message: Message, i18n: I18nContext):
             gemini_url=constants.GEMINI_URL,
             claude_url=constants.CLAUDE_URL,
             chatgpt_url=constants.CHATGPT_URL,
+            lapa_url=constants.LAPATHONIIA_URL,
         )
     )
 
@@ -362,6 +369,7 @@ async def query(
         AIModels.GEMINI: Gemini,
         AIModels.GPT: ChatGPT,
         AIModels.CLAUDE: Claude,
+        AIModels.LAPA: Lapathoniia,
     }
 
     client_class = clients.get(model)

@@ -36,6 +36,9 @@ info-help-text =
     🔹 ChatGPT (OpenAI):
     { $chatgpt_url }
 
+    🔹 Lapathoniia:
+    { $lapa_url }
+
     ---
     ⚠️ Important:
     • Keys are used exclusively for requests to the models.
