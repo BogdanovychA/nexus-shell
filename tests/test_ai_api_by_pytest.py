@@ -7,6 +7,7 @@ import pytest
 from ai.chat_gpt import ChatGPT
 from ai.claude import Claude
 from ai.gemini import Gemini
+from ai.lapathoniia import Lapathoniia
 
 
 @pytest.fixture
@@ -39,6 +40,10 @@ def mute_logging():
         (Claude, "   ", "error-no-token"),
         (Claude, "bad token", "error-invalid-token"),
         (Claude, "кирилиця в токені", "error-forbidden-chars"),
+        (Lapathoniia, "", "error-no-token"),
+        (Lapathoniia, "   ", "error-no-token"),
+        (Lapathoniia, "bad token", "error-invalid-token"),
+        (Lapathoniia, "кирилиця в токені", "error-forbidden-chars"),
     ],
 )
 async def test_ai_queries(client_class, token, expected_error, mock_i18n):
