@@ -32,7 +32,7 @@ class Lapathoniia(AIModel):
                 api_key=token, base_url="https://api.lapathoniia.top"
             )
 
-            model = "MamayLM-Gemma-3-12B-IT-v1.0"  # LapaLLM-Gemma-3-12B-v0.1.2-instruct
+            model = "MamayLM-Gemma-3-27B-IT-v2.0"  # LapaLLM-Gemma-3-12B-v0.1.2-instruct
 
             message_list = [
                 {"role": "system", "content": global_prompt},
