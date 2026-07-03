@@ -4,7 +4,7 @@ authors:
   - family-names: "Bogdanovych"
     given-names: "Andrii"
     orcid: "https://orcid.org/0009-0006-9045-5675"
-title: "nexus-shell"
+title: "Nexus Shell AI Agent"
 version: 1.1.2
 date-released: 2026-04-27
 abstract: "Nexus Shell is an open-source AI agent and Telegram bot designed to provide a unified interface for interacting with multiple Large Language Models (LLMs), including Google Gemini, OpenAI ChatGPT, and Anthropic Claude. It features per-user configuration, secure API key encryption, and flexible storage backends (Firebase, PostgreSQL, MongoDB), making it a versatile tool for AI-driven automation and personal productivity."
